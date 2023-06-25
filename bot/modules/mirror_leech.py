@@ -20,7 +20,7 @@ from bot.helper.mirror_utils.download_utils.direct_link_generator import direct_
 from bot.helper.mirror_utils.download_utils.telegram_download import TelegramDownloadHelper
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.message_utils import sendMessage, get_tg_link_content, deleteMessage, five_minute_del, one_minute_del
+from bot.helper.telegram_helper.message_utils import sendMessage, get_tg_link_content, deleteMessage, five_minute_del, one_minute_del, del_message
 from bot.helper.listeners.tasks_listener import MirrorLeechListener
 from bot.helper.ext_utils.help_messages import MIRROR_HELP_MESSAGE
 from bot.helper.ext_utils.bulk_links import extract_bulk_links
@@ -187,7 +187,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             final_msg += f'\n<b>{__i}</b>: {__msg}\n'
         if error_button is not None:
             error_button = error_button.build_menu(2)
-        await deleteMessage(message)
+        await del_message(message)
         force_m = await sendMessage(message, final_msg, error_button)
         await five_minute_del(force_m)
         return

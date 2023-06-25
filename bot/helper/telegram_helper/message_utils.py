@@ -170,6 +170,11 @@ async def five_minute_del(message):
     await sleep(300)
     await deleteMessage(message)
 
+async def del_message(message):
+    if reply_to := message.reply_to_message:
+        await deleteMessage(reply_to)
+    await deleteMessage(message)
+
 async def deleteMessage(message):
     try:
         await message.delete()
