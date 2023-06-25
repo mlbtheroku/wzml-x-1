@@ -13,14 +13,11 @@ from bot.helper.telegram_helper import button_build
 
 async def cancel_mirror(_, message):
     user_id = message.from_user.id
-    msg = message.text.split('_', maxsplit=1)
+    msg = message.text.split()
     if len(msg) > 1:
-        cmd_data = msg[1].split('@', maxsplit=1)
-        if len(cmd_data) > 1 and cmd_data[1].strip() != bot_name:
-            return
-        gid = cmd_data[0]
+        gid = msg[1]
         dl = await getDownloadByGid(gid)
-        if dl is None:
+        if not dl:
             await sendMessage(message, f"GID: <code>{gid}</code> Not Found.")
             return
     elif reply_to_id := message.reply_to_message_id:
