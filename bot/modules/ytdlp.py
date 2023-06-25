@@ -10,7 +10,7 @@ from time import time
 
 from bot import DOWNLOAD_DIR, bot, config_dict, user_data, LOGGER
 from bot.helper.ext_utils.task_manager import task_utils
-from bot.helper.telegram_helper.message_utils import sendMessage, editMessage
+from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, deleteMessage, five_minute_del, one_minute_del
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.bot_utils import get_readable_file_size, is_url, new_task, sync_to_async, new_task, is_rclone_path, new_thread, get_readable_time, arg_parser
 from bot.helper.mirror_utils.download_utils.yt_dlp_download import YoutubeDLHelper
@@ -342,7 +342,9 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
         link = reply_to.text.split('\n', 1)[0].strip()
 
     if not is_url(link):
-        await sendMessage(message, YT_HELP_MESSAGE)
+        reply_message = await sendMessage(message, YT_HELP_MESSAGE.format(cmd = message.command[0]))
+        await deleteMessage(message)
+        await one_minute_del(reply_message)
         return
 
     error_msg = []
@@ -357,7 +359,9 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
             final_msg += f'\n<b>{__i}</b>: {__msg}\n'
         if error_button is not None:
             error_button = error_button.build_menu(2)
-        await sendMessage(message, final_msg, error_button)
+        await deleteMessage(message)
+        force_m = await sendMessage(message, final_msg, error_button)
+        await five_minute_del(force_m)
         return
 
     if not isLeech:

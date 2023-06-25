@@ -166,6 +166,10 @@ async def one_minute_del(message):
     await sleep(60)
     await deleteMessage(message)
 
+async def five_minute_del(message):
+    await sleep(300)
+    await deleteMessage(message)
+
 async def deleteMessage(message):
     try:
         await message.delete()
