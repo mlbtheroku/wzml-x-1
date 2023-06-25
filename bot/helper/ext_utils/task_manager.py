@@ -5,7 +5,7 @@ from bot import OWNER_ID, config_dict, queued_dl, queued_up, non_queued_up, non_
 from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
 from bot.helper.ext_utils.fs_utils import get_base_name, check_storage_threshold
 from bot.helper.ext_utils.bot_utils import get_user_tasks, getdailytasks, sync_to_async, get_telegraph_list, get_readable_file_size, checking_access
-from bot.helper.telegram_helper.message_utils import forcesub, BotPm_check, user_info
+from bot.helper.telegram_helper.message_utils import forcesub, BotPm_check, user_info, del_message
 from bot.helper.themes import BotTheme
 
 
@@ -30,6 +30,7 @@ async def stop_duplicate_check(name, listener):
         if telegraph_content:
             msg = BotTheme('STOP_DUPLICATE', content=contents_no)
             button = await get_telegraph_list(telegraph_content)
+            await del_message(message)
             return msg, button
     return False, None
 
@@ -215,4 +216,5 @@ async def task_utils(message):
                     msg.append(_msg)
     if (maxtask := config_dict['USER_MAX_TASKS']) and await get_user_tasks(message.from_user.id, maxtask):
         msg.append(f"Your tasks limit exceeded for {maxtask} tasks")
+    await del_message(message)
     return msg, button

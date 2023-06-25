@@ -29,7 +29,7 @@ from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
 from bot.helper.mirror_utils.upload_utils.pyrogramEngine import TgUploader
 from bot.helper.mirror_utils.upload_utils.ddlEngine import DDLUploader
 from bot.helper.mirror_utils.rclone_utils.transfer import RcloneTransferHelper
-from bot.helper.telegram_helper.message_utils import sendBot, sendMessage, delete_all_messages, sendMirrorLog, update_all_messages
+from bot.helper.telegram_helper.message_utils import sendBot, sendMessage, delete_all_messages, sendMirrorLog, update_all_messages, del_message
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.db_handler import DbManger
 from bot.helper.themes import BotTheme
@@ -491,6 +491,7 @@ class MirrorLeechListener:
                 non_queued_up.remove(self.uid)
 
         await start_from_queued()
+        await del_message(self.message)
 
     async def onDownloadError(self, error, button=None):
         async with download_dict_lock:
@@ -523,6 +524,7 @@ class MirrorLeechListener:
                 non_queued_up.remove(self.uid)
 
         await start_from_queued()
+        await del_message(self.message)
         await sleep(3)
         await clean_download(self.dir)
         if self.newDir:
@@ -555,6 +557,7 @@ class MirrorLeechListener:
                 non_queued_up.remove(self.uid)
 
         await start_from_queued()
+        await del_message(self.message)
         await sleep(3)
         await clean_download(self.dir)
         if self.newDir:

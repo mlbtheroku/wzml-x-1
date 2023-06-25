@@ -146,6 +146,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             reply_to, session = await get_tg_link_content(link)
         except Exception as e:
             await sendMessage(message, f'ERROR: {e}')
+            await del_message(message)
             return
     elif not link and (reply_to := message.reply_to_message):
         if reply_to.text:
@@ -155,6 +156,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
                     reply_to, session = await get_tg_link_content(reply_text)
                 except Exception as e:
                     await sendMessage(message, f'ERROR: {e}')
+                    await del_message(message)
                     return
 
     if reply_to:
