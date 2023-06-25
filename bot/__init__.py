@@ -419,22 +419,6 @@ IMG_SEARCH = (IMG_SEARCH.replace("'", '').replace('"', '').replace(
 IMG_PAGE = environ.get('IMG_PAGE', '')
 IMG_PAGE = 1 if not IMG_PAGE else int(IMG_PAGE)
 
-AUTHOR_NAME = environ.get('AUTHOR_NAME', '')
-if len(AUTHOR_NAME) == 0:
-    AUTHOR_NAME = 'WZML-X'
-
-AUTHOR_URL = environ.get('AUTHOR_URL', '')
-if len(AUTHOR_URL) == 0:
-    AUTHOR_URL = 'https://t.me/WZML_X'
-
-TITLE_NAME = environ.get('TITLE_NAME', '')
-if len(TITLE_NAME) == 0:
-    TITLE_NAME = 'WeebZone-X'
-
-GD_INFO = environ.get('GD_INFO', '')
-if len(GD_INFO) == 0:
-    GD_INFO = 'Uploaded by WZML-X'
-
 SAVE_MSG = environ.get('SAVE_MSG', '')
 SAVE_MSG = SAVE_MSG.lower() == 'true'
 
@@ -535,11 +519,7 @@ config_dict = {'ANIME_TEMPLATE': ANIME_TEMPLATE,
                'IMG_SEARCH': IMG_SEARCH,
                'IMG_PAGE': IMG_PAGE,
                'IMDB_TEMPLATE': IMDB_TEMPLATE,
-               'AUTHOR_NAME': AUTHOR_NAME,
-               'AUTHOR_URL': AUTHOR_URL,
-               'TITLE_NAME': TITLE_NAME,
                'TIMEZONE': TIMEZONE,
-               'GD_INFO': GD_INFO,
                'EQUAL_SPLITS': EQUAL_SPLITS,
                'EXTENSION_FILTER': EXTENSION_FILTER,
                'GDRIVE_ID': GDRIVE_ID,

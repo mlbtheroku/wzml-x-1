@@ -177,7 +177,7 @@ async def __getResult(search_results, key, message, method):
         telegraph_content.append(msg)
 
     await editMessage(message, f"<b>Creating</b> {len(telegraph_content)} <b>Telegraph pages.</b>")
-    path = [(await telegraph.create_page(title=f"{config_dict['TITLE_NAME']} Torrent Search",
+    path = [(await telegraph.create_page(title="Torrent Search",
                                          content=content))["path"] for content in telegraph_content]
     if len(path) > 1:
         await editMessage(message, f"<b>Editing</b> {len(telegraph_content)} <b>Telegraph pages.</b>")

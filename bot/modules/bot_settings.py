@@ -41,13 +41,8 @@ default_values = {'AUTO_DELETE_MESSAGE_DURATION': 30,
                   'BOT_THEME': 'minimal',
                   'BOT_LANG': 'en',
                   'IMG_PAGE': 1,
-                  'AUTHOR_NAME': 'WZML-X',
-                  'AUTHOR_URL': 'https://t.me/WZML_X',
-                  'TITLE_NAME': 'WeebZone-X',
-                  'GD_INFO': 'Uploaded by WZML-X',
                   }
-bool_vars = ['AS_DOCUMENT', 'BOT_PM', 'STOP_DUPLICATE', 'SET_COMMANDS', 'SAVE_MSG', 'SHOW_MEDIAINFO',
-             'IS_TEAM_DRIVE', 'USE_SERVICE_ACCOUNTS', 'WEB_PINCODE', 'EQUAL_SPLITS', 'DISABLE_DRIVE_LINK']
+bool_vars = ['AS_DOCUMENT', 'BOT_PM', 'STOP_DUPLICATE',                       'SET_COMMANDS', 'SAVE_MSG', 'IS_TEAM_DRIVE',                     'SHOW_MEDIAINFO', 'USE_SERVICE_ACCOUNTS',                        'WEB_PINCODE', 'EQUAL_SPLITS', 'DISABLE_DRIVE_LINK',             'SHOW_LIMITS']
 
 
 async def load_config():
@@ -381,22 +376,6 @@ async def load_config():
     IMAGES = (IMAGES.replace("'", '').replace('"', '').replace(
         '[', '').replace(']', '').replace(",", "")).split()
 
-    AUTHOR_NAME = environ.get('AUTHOR_NAME', '')
-    if len(AUTHOR_NAME) == 0:
-        AUTHOR_NAME = 'WZML-X'
-
-    AUTHOR_URL = environ.get('AUTHOR_URL', '')
-    if len(AUTHOR_URL) == 0:
-        AUTHOR_URL = 'https://t.me/WZML_X'
-
-    TITLE_NAME = environ.get('TITLE_NAME', '')
-    if len(TITLE_NAME) == 0:
-        TITLE_NAME = 'WeebZone-X'
-
-    GD_INFO = environ.get('GD_INFO', '')
-    if len(GD_INFO) == 0:
-        GD_INFO = 'Uploaded by WZML-X'
-
     SAVE_MSG = environ.get('SAVE_MSG', '')
     SAVE_MSG = SAVE_MSG.lower() == 'true'
 
@@ -538,10 +517,6 @@ async def load_config():
                         'IMG_SEARCH': IMG_SEARCH,
                         'IMG_PAGE': IMG_PAGE,
                         'IMDB_TEMPLATE': DEF_IMDB_TEMP,
-                        'AUTHOR_NAME': AUTHOR_NAME,
-                        'AUTHOR_URL': AUTHOR_URL,
-                        'TITLE_NAME': TITLE_NAME,
-                        'GD_INFO': GD_INFO,
                         'EQUAL_SPLITS': EQUAL_SPLITS,
                         'EXTENSION_FILTER': EXTENSION_FILTER,
                         'GDRIVE_ID': GDRIVE_ID,
