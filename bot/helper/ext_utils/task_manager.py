@@ -216,5 +216,4 @@ async def task_utils(message):
                     msg.append(_msg)
     if (maxtask := config_dict['USER_MAX_TASKS']) and await get_user_tasks(message.from_user.id, maxtask):
         msg.append(f"Your tasks limit exceeded for {maxtask} tasks")
-    await del_message(message)
     return msg, button
