@@ -115,7 +115,6 @@ class TelegramDownloadHelper:
                     return
                 if limit_exceeded := await limit_checker(size, self.__listener):
                     await sendMessage(self.__listener.message, limit_exceeded)
-                    await del_message(self.__listener.message)
                     return
                 added_to_queue, event = await is_queued(self.__listener.uid)
                 if added_to_queue:
