@@ -476,10 +476,6 @@ if len(MDL_TEMPLATE) == 0:
 
 <a href='{url}'>Read More ...</a>'''
 
-TIMEZONE = environ.get('TIMEZONE', '')
-if len(TIMEZONE) == 0:
-    TIMEZONE = 'Asia/Kolkata'
-
 config_dict = {'ANIME_TEMPLATE': ANIME_TEMPLATE,
                'AS_DOCUMENT': AS_DOCUMENT,
                'AUTHORIZED_CHATS': AUTHORIZED_CHATS,
@@ -514,7 +510,6 @@ config_dict = {'ANIME_TEMPLATE': ANIME_TEMPLATE,
                'IMG_SEARCH': IMG_SEARCH,
                'IMG_PAGE': IMG_PAGE,
                'IMDB_TEMPLATE': IMDB_TEMPLATE,
-               'TIMEZONE': TIMEZONE,
                'EQUAL_SPLITS': EQUAL_SPLITS,
                'EXTENSION_FILTER': EXTENSION_FILTER,
                'GDRIVE_ID': GDRIVE_ID,

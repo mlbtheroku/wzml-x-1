@@ -12,10 +12,9 @@ class style:
 
     # async def restart_notification(): ---> __main__.py
     RESTART_SUCCESS = '''Restarted Successfully!
+
 <b>Date:</b> {date}
-<b>Time:</b> {time}
-<b>TimeZone:</b> {timz}
-<b>Version:</b> {version}'''
+<b>Time:</b> {time}'''
     RESTARTED = '''Bot Restarted!'''
     # ---------------------
 

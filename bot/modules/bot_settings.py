@@ -432,10 +432,6 @@ async def load_config():
 
 <a href='{url}'>Read More ...</a>'''
     
-    TIMEZONE = environ.get('TIMEZONE', '')
-    if len(TIMEZONE) == 0:
-        TIMEZONE = 'Asia/Kolkata'
-        
     DRIVES_IDS.clear()
     DRIVES_NAMES.clear()
     INDEX_URLS.clear()
@@ -553,7 +549,6 @@ async def load_config():
                         'SUDO_USERS': SUDO_USERS,
                         'TELEGRAM_API': TELEGRAM_API,
                         'TELEGRAM_HASH': TELEGRAM_HASH,
-                        'TIMEZONE': TIMEZONE,
                         'TORRENT_TIMEOUT': TORRENT_TIMEOUT,
                         'UPSTREAM_REPO': UPSTREAM_REPO,
                         'UPSTREAM_BRANCH': UPSTREAM_BRANCH,
