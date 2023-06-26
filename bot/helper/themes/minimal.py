@@ -6,33 +6,6 @@ class style:
     ST_UNAUTH = '''<i>You Are not authorized user!</i>'''
     # ---------------------
 
-    # async def stats(client, message):
-    STATS = '''<b>BOT VERSION :</b>
-<b>Bot Updated :</b> {last_commit}
-<b>Bot Version :</b> {bot_version}
-<b>Last ChangeLog :</b> {commit_details}
-
-<b><i>BOT SYSTEM :</i></b>
-<b>Bot Uptime :</b> {bot_uptime}
-<b>OS Uptime :</b> {os_uptime}
-<b>OS Arch :</b> {os_arch}
-
-<b><i>BOT ANALYSIS :</i></b>
-<b>CPU :</b> {cpu}%
-<b>CPU Frequency :</b> {cpu_freq}
-<b>P-Core(s) :</b> {p_core} | <b>V-Core(s) :</b> {v_core} ( <b>T :</b> {total_core} )
-
-<b><i>RAM ( MEMORY ) :</i></b> {ram}%
-<b>U :</b> {ram_u} | <b>F :</b> {ram_f} | <b>T :</b> {ram_t}
-
-<b><i>SWAP MEMORY :</i></b> {swap}%
-<b>U :</b> {swap_u} | <b>F :</b> {swap_f} | <b>T :</b> {swap_t}
-
-<b><i>Disk Storage :</i></b> {disk}%
-<b>U :</b> {disk_u} | <b>F :</b> {disk_f} | <b>T :</b> {disk_t}
-'''
-    # ---------------------
-
     # async def restart(client, message): ---> __main__.py
     RESTARTING = 'Restarting...'
     # ---------------------
@@ -47,7 +20,7 @@ class style:
     # ---------------------
 
     # async def ping(client, message): ---> __main__.py
-    PING = '<i>Starting Ping..</i>'
+    PING = 'Starting Ping...'
     PING_VALUE = '{value} ms'
     # ---------------------
 
@@ -76,64 +49,15 @@ class style:
     M_BOT_MSG =             '<b>Links has sent to your inbox</b>'
     
     # ----- BUTTONS -------
-    CLOUD_LINK =      'Cloud Link'
+    CLOUD_LINK =      'Drive Link'
     SAVE_MSG =        'Save Message'
     RCLONE_LINK =     'Rclone Link'
     DDL_LINK =        '{Serv} Link'
     INDEX_LINK =      'Index Link'
     VIEW_LINK =       'View Link'
-    CHECK_PM =        'View in Bot PM'
-    CHECK_LL =        'View in Leech Log'
+    CHECK_PM =        'View in inbox'
+    CHECK_LL =        'View in leech log'
     MEDIAINFO_LINK =  'MediaInfo'
-    # ---------------------
-
-    # def get_readable_message(): ---> bot_utilis.py
-    ####--------OVERALL MSG HEADER----------
-    STATUS_NAME =       '{Name}\n'
-
-    #####---------PROGRESSIVE STATUS-------
-    BAR =               '\n┃ {Bar}'
-    PROCESSED =         '\n┠ <b>Processed:</b> {Processed}'
-    STATUS =            '\n┠ <b>Status:</b> <a href="{Url}">{Status}</a>'
-    ETA =                                                ' | <b>ETA:</b> {Eta}'
-    SPEED =             '\n┠ <b>Speed:</b> {Speed}'
-    ELAPSED =                                     ' | <b>Elapsed:</b> {Elapsed}'
-    ENGINE =            '\n┠ <b>Engine:</b> {Engine}'
-    SEEDERS =           '\n┠ <b>Seeders:</b> {Seeders} | '
-    LEECHERS =                                           '<b>Leechers:</b> {Leechers}'
-
-    ####--------SEEDING----------
-    SEED_SIZE =      '\n┠ <b>Size: </b>{Size}'
-    SEED_SPEED =     '\n┠ <b>Speed: </b> {Speed} | '
-    UPLOADED =                                     '<b>Uploaded: </b> {Upload}'
-    RATIO =          '\n┠ <b>Ratio: </b> {Ratio} | '
-    TIME =                                         '<b>Time: </b> {Time}'
-    SEED_ENGINE =    '\n┠ <b>Engine:</b> {Engine}'
-
-    ####--------NON-PROGRESSIVE + NON SEEDING----------
-    STATUS_SIZE =    '\n┠ <b>Size: </b>{Size}'
-    NON_ENGINE =     '\n┠ <b>Engine:</b> {Engine}'
-
-    ####--------OVERALL MSG FOOTER----------
-    USER =              '\n┠ <b>User:</b> <code>{User}</code> | '
-    ID =                                                        '<b>ID:</b> <code>{Id}</code>'
-    CANCEL = '''\n┖ {Cancel}\n\n'''
-
-    ####------FOOTER--------
-    FOOTER = '⌬ <b><i>Bot Stats</i></b>\n'
-    PAGE = '┠ <b>Page:</b> {Page} | '
-    TASKS =                       '<b>Tasks:</b> {Tasks}\n'
-    Cpu = '┠ <b>CPU:</b> {cpu}% | '
-    FREE =                      '<b>FREE:</b> {free}'
-    Ram = '\n┠ <b>RAM:</b> {ram}% | '
-    uptime =                     '<b>UPTIME:</b> {uptime}'
-    DL = '\n┖ <b>DL:</b> {DL}/s | '
-    UL =                        '<b>UL:</b> {UL}/s'
-
-    ###--------BUTTONS-------
-    PREVIOUS = 'Prev'
-    REFRESH = 'Refresh'
-    NEXT = 'Next'
     # ---------------------
 
     #STOP_DUPLICATE_MSG: ---> clone.py, aria2_listener.py, task_manager.py
@@ -151,9 +75,9 @@ class style:
     # ---------------------
 
     # LIST ---> gd_list.py
-    LIST_SEARCHING = '<b>Searching for <i>{NAME}</i></b>'
-    LIST_FOUND = '<b>Found {NO} result for <i>{NAME}</i></b>'
-    LIST_NOT_FOUND = 'No result found for <i>{NAME}</i>'
+    LIST_SEARCHING = '<b>Searching for </b>{NAME}'
+    LIST_FOUND = '<b>Found {NO} result for </b>{NAME}'
+    LIST_NOT_FOUND = '<b>No result found for </b>{NAME}'
     # ---------------------
 
     # async def mirror_status(_, message): ----> status.py

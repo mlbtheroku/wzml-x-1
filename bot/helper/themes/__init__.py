@@ -6,7 +6,7 @@ from bot.helper.themes import minimal
 AVL_THEMES = {'minimal': minimal}
 
 def BotTheme(var_name, **format_vars):
-    theme_ = config_dict['BOT_THEME']
+    theme_ = 'minimal'
 
     if theme_ in AVL_THEMES:
         text = getattr(AVL_THEMES[theme_].style(), var_name)

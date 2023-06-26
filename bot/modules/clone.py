@@ -145,6 +145,7 @@ async def gdcloneNode(message, link, tag):
         listener = MirrorLeechListener(message, tag=tag, isClone=True)
         if limit_exceeded := await limit_checker(size, listener):
             await sendMessage(listener.message, limit_exceeded)
+            await del_message(listener.message)
             return
         await listener.onDownloadStart()
         LOGGER.info(f'Clone Started: Name: {name} - Source: {link}')

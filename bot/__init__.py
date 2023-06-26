@@ -403,10 +403,6 @@ DAILY_LEECH_LIMIT = '' if len(
 DISABLE_DRIVE_LINK = environ.get('DISABLE_DRIVE_LINK', '')
 DISABLE_DRIVE_LINK = DISABLE_DRIVE_LINK.lower() == 'true'
 
-BOT_THEME = environ.get('BOT_THEME', '')
-if len(BOT_THEME) == 0:
-    BOT_THEME = 'minimal'
-
 IMAGES = environ.get('IMAGES', '')
 IMAGES = (IMAGES.replace("'", '').replace('"', '').replace(
     '[', '').replace(']', '').replace(",", "")).split()
@@ -514,7 +510,6 @@ config_dict = {'ANIME_TEMPLATE': ANIME_TEMPLATE,
                'LEECH_LOG_ID': LEECH_LOG_ID,
                'BOT_PM': BOT_PM,
                'DISABLE_DRIVE_LINK': DISABLE_DRIVE_LINK,
-               'BOT_THEME': BOT_THEME,
                'IMAGES': IMAGES,
                'IMG_SEARCH': IMG_SEARCH,
                'IMG_PAGE': IMG_PAGE,
