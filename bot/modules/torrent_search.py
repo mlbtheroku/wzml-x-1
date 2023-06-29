@@ -6,11 +6,11 @@ from html import escape
 from urllib.parse import quote
 
 from bot import bot, LOGGER, config_dict, get_client
-from bot.helper.telegram_helper.message_utils import editMessage, sendMessage
+from bot.helper.telegram_helper.message_utils import editMessage, sendMessage, delete_links, one_minute_del, five_minute_del
 from bot.helper.ext_utils.telegraph_helper import telegraph
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
-from bot.helper.ext_utils.bot_utils import get_readable_file_size, sync_to_async, new_task, checking_access
+from bot.helper.ext_utils.bot_utils import get_readable_file_size, sync_to_async, new_task, checking_access, new_thread
 from bot.helper.telegram_helper.button_build import ButtonMaker
 
 PLUGINS = []
@@ -208,7 +208,7 @@ async def __plugin_buttons(user_id):
     buttons.ibutton("Cancel", f"torser {user_id} cancel")
     return buttons.build_menu(2)
 
-
+@new_thread
 async def torrentSearch(_, message):
     user_id = message.from_user.id
     buttons = ButtonMaker()
@@ -216,10 +216,14 @@ async def torrentSearch(_, message):
     SEARCH_PLUGINS = config_dict['SEARCH_PLUGINS']
     msg, btn = checking_access(user_id)
     if msg is not None:
-        await sendMessage(message, msg, btn.build_menu(1))
+        reply_message = await sendMessage(message, msg, btn.build_menu(1))
+        await delete_links(message)
+        await five_minute_del(reply_message)
         return
     if SITES is None and not SEARCH_PLUGINS:
-        await sendMessage(message, "No API link or search PLUGINS added for this function")
+        reply_message = await sendMessage(message, "No API link or search PLUGINS added for this function")
+        await delete_links(message)
+        await one_minute_del(reply_message)
     elif len(key) == 1 and SITES is None:
         await sendMessage(message, "Send a search key along with command")
     elif len(key) == 1:

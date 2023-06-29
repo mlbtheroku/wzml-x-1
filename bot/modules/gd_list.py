@@ -5,11 +5,11 @@ from pyrogram.filters import command, regex
 
 from bot import LOGGER, bot, config_dict
 from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
-from bot.helper.telegram_helper.message_utils import sendMessage, editMessage
+from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, delete_links, one_minute_del, five_minute_del
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.button_build import ButtonMaker
-from bot.helper.ext_utils.bot_utils import sync_to_async, new_task, get_telegraph_list, checking_access
+from bot.helper.ext_utils.bot_utils import sync_to_async, new_task, get_telegraph_list, checking_access, new_thread
 from bot.helper.themes import BotTheme
 
 
@@ -62,14 +62,18 @@ async def select_type(_, query):
     await editMessage(message, BotTheme('LIST_SEARCHING', NAME=key))
     await _list_drive(key, message, item_type, isRecursive)
 
-
+@new_thread
 async def drive_list(_, message):
     if len(message.text.split()) == 1:
-        return await sendMessage(message, 'Send a search key along with command')
+        reply_message = await sendMessage(message, 'Send a search key along with command')
+        await delete_links(message)
+        await one_minute_del(reply_message)
     user_id = message.from_user.id
     msg, btn = checking_access(user_id)
     if msg is not None:
-        await sendMessage(message, msg, btn.build_menu(1))
+        reply_message = await sendMessage(message, msg, btn.build_menu(1))
+        await delete_links(message)
+        five_minute_del(reply_message)
         return
     buttons = await list_buttons(user_id)
     await sendMessage(message, 'Choose list options:', buttons)
