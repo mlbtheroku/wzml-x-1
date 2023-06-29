@@ -113,8 +113,7 @@ class TgUploader:
             if self.__bot_pm and self.__listener.isSuperGroup:
                 await sendBot(self.__listener.message, BotTheme('L_PM_START', msg_link=self.__listener.source_url))
             try:
-                self.__sent_msg = await bot.send_message(chat_id=LEECH_LOG_ID, text=BotTheme('L_LOG_START', mention=msg_user.mention(style='HTML'), uid=msg_user.id, msg_link=msg_link if not config_dict['DELETE_LINKS'] else self.__listener.source_url),
-                                                            disable_web_page_preview=True, disable_notification=True)
+                self.__sent_msg = await bot.send_message(chat_id=LEECH_LOG_ID, text=BotTheme('L_LOG_START', mention=msg_user.mention(style='HTML'), uid=msg_user.id, msg_link=self.__listener.source_url), disable_web_page_preview=True, disable_notification=True)
             except Exception as er:
                 await self.__listener.onUploadError(str(er))
                 return False

@@ -20,7 +20,7 @@ from bot.helper.mirror_utils.download_utils.direct_link_generator import direct_
 from bot.helper.mirror_utils.download_utils.telegram_download import TelegramDownloadHelper
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, get_tg_link_content, delete_links, auto_delete_message
+from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, get_tg_link_content, delete_links, deleteMessage, one_minute_del, five_minute_del
 from bot.helper.listeners.tasks_listener import MirrorLeechListener
 from bot.helper.ext_utils.help_messages import MIRROR_HELP_MESSAGE
 from bot.helper.ext_utils.bulk_links import extract_bulk_links
@@ -172,8 +172,8 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
 
     if not is_url(link) and not is_magnet(link) and not await aiopath.exists(link) and not is_rclone_path(link) and file_ is None:
         reply_message = await sendMessage(message, MIRROR_HELP_MESSAGE)
-        await auto_delete_message(message, reply_message)
-        await delete_links(message)
+        await deleteMessage(message)
+        await one_minute_del(reply_message)
         return
 
     error_msg = []
@@ -183,13 +183,14 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         error_msg.extend(task_utilis_msg)
 
     if error_msg:
-        final_msg = f'Hey, <b>{tag}</b>,\n'
+        final_msg = f'Hey, <b>{tag}</b>!\n'
         for __i, __msg in enumerate(error_msg, 1):
             final_msg += f'\n<b>{__i}</b>: {__msg}\n'
         if error_button is not None:
             error_button = error_button.build_menu(2)
-        await sendMessage(message, final_msg, error_button)
         await delete_links(message)
+        force_m = await sendMessage(message, final_msg, error_button)
+        await five_minute_del(force_m)
         return
 
     if link:

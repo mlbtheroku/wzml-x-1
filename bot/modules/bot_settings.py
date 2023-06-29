@@ -30,8 +30,7 @@ from bot.modules.rss import addJob
 START = 0
 STATE = 'view'
 handler_dict = {}
-default_values = {'AUTO_DELETE_MESSAGE_DURATION': 30,
-                  'DEFAULT_UPLOAD': 'gd',
+default_values = {'DEFAULT_UPLOAD': 'gd',
                   'DOWNLOAD_DIR': '/usr/src/app/downloads/',
                   'LEECH_SPLIT_SIZE': MAX_SPLIT_SIZE,
                   'RSS_DELAY': 900,
@@ -42,7 +41,7 @@ default_values = {'AUTO_DELETE_MESSAGE_DURATION': 30,
                   'IMG_PAGE': 1,
                   }
 bool_vars = ['AS_DOCUMENT', 'BOT_PM', 'STOP_DUPLICATE', 'SET_COMMANDS', 'SAVE_MSG', 'SHOW_MEDIAINFO', 'SOURCE_LINK',
-             'IS_TEAM_DRIVE', 'USE_SERVICE_ACCOUNTS', 'WEB_PINCODE', 'EQUAL_SPLITS', 'DISABLE_DRIVE_LINK', 'DELETE_LINKS', 'SHOW_LIMITS']
+             'IS_TEAM_DRIVE', 'USE_SERVICE_ACCOUNTS', 'WEB_PINCODE', 'EQUAL_SPLITS', 'DISABLE_DRIVE_LINK', 'SHOW_LIMITS']
 
 
 async def load_config():
@@ -189,13 +188,6 @@ async def load_config():
                 Interval.clear()
                 Interval.append(setInterval(STATUS_UPDATE_INTERVAL, update_all_messages))
 
-    AUTO_DELETE_MESSAGE_DURATION = environ.get(
-        'AUTO_DELETE_MESSAGE_DURATION', '')
-    if len(AUTO_DELETE_MESSAGE_DURATION) == 0:
-        AUTO_DELETE_MESSAGE_DURATION = 30
-    else:
-        AUTO_DELETE_MESSAGE_DURATION = int(AUTO_DELETE_MESSAGE_DURATION)
-
     YT_DLP_OPTIONS = environ.get('YT_DLP_OPTIONS', '')
     if len(YT_DLP_OPTIONS) == 0:
         YT_DLP_OPTIONS = ''
@@ -281,9 +273,6 @@ async def load_config():
     
     SOURCE_LINK = environ.get('SOURCE_LINK', '')
     SOURCE_LINK = SOURCE_LINK.lower() == 'true'
-
-    DELETE_LINKS = environ.get('DELETE_LINKS', '')
-    DELETE_LINKS = DELETE_LINKS.lower() == 'true'
 
     EQUAL_SPLITS = environ.get('EQUAL_SPLITS', '')
     EQUAL_SPLITS = EQUAL_SPLITS.lower() == 'true'
@@ -498,7 +487,6 @@ async def load_config():
     config_dict.update({'ANIME_TEMPLATE': DEF_ANI_TEMP,
                         'AS_DOCUMENT': AS_DOCUMENT,
                         'AUTHORIZED_CHATS': AUTHORIZED_CHATS,
-                        'AUTO_DELETE_MESSAGE_DURATION': AUTO_DELETE_MESSAGE_DURATION,
                         'BASE_URL': BASE_URL,
                         'BASE_URL_PORT': BASE_URL_PORT,
                         'BOT_TOKEN': BOT_TOKEN,
@@ -506,7 +494,6 @@ async def load_config():
                         'CAP_FONT': CAP_FONT,
                         'CMD_SUFFIX': CMD_SUFFIX,
                         'DATABASE_URL': DATABASE_URL,
-                        'DELETE_LINKS': DELETE_LINKS,
                         'DEFAULT_UPLOAD': DEFAULT_UPLOAD,
                         'DOWNLOAD_DIR': DOWNLOAD_DIR,
                         'STORAGE_THRESHOLD': STORAGE_THRESHOLD,

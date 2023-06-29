@@ -7,7 +7,7 @@ from time import time
 from bot import status_reply_dict_lock, download_dict, download_dict_lock, botStartTime, DOWNLOAD_DIR, Interval, config_dict, bot
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
-from bot.helper.telegram_helper.message_utils import sendMessage, deleteMessage, auto_delete_message, sendStatusMessage, update_all_messages
+from bot.helper.telegram_helper.message_utils import sendMessage, deleteMessage, one_minute_del, sendStatusMessage, update_all_messages
 from bot.helper.ext_utils.bot_utils import get_readable_file_size, get_readable_time, turn_page, setInterval, new_task
 from bot.helper.themes import BotTheme
 
@@ -22,7 +22,8 @@ async def mirror_status(_, message):
         msg = BotTheme('NO_ACTIVE_DL', cpu=cpu_percent(), free=free,
                        ram=virtual_memory().percent, uptime=currentTime)
         reply_message = await sendMessage(message, msg)
-        await auto_delete_message(message, reply_message)
+        await deleteMessage(message)
+        await one_minute_del(reply_message)
     else:
         await sendStatusMessage(message)
         await deleteMessage(message)

@@ -178,20 +178,14 @@ async def one_minute_del(message):
     await sleep(60)
     await deleteMessage(message)
 
-async def auto_delete_message(cmd_message=None, bot_message=None):
-    if config_dict['AUTO_DELETE_MESSAGE_DURATION'] != -1:
-        await sleep(config_dict['AUTO_DELETE_MESSAGE_DURATION'])
-        if cmd_message is not None:
-            await deleteMessage(cmd_message)
-        if bot_message is not None:
-            await deleteMessage(bot_message)
-
+async def five_minute_del(message):
+    await sleep(300)
+    await deleteMessage(message)
 
 async def delete_links(message):
-    if config_dict['DELETE_LINKS']:
-        if reply_to := message.reply_to_message:
-            await deleteMessage(reply_to)
-        await deleteMessage(message)
+    if reply_to := message.reply_to_message:
+        await deleteMessage(reply_to)
+    await deleteMessage(message)
         
         
 async def delete_all_messages():

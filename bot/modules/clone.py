@@ -10,7 +10,7 @@ from json import loads
 from bot import LOGGER, download_dict, download_dict_lock, config_dict, bot
 from bot.helper.ext_utils.task_manager import limit_checker, task_utils
 from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
-from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, deleteMessage, sendStatusMessage, delete_links, auto_delete_message
+from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, deleteMessage, sendStatusMessage, delete_links, one_minute_del, five_minute_del
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.mirror_utils.status_utils.gdrive_status import GdriveStatus
@@ -167,7 +167,8 @@ async def gdcloneNode(message, link, tag):
         await listener.onUploadComplete(link, size, files, folders, mime_type, name)
     else:
         reply_message = await sendMessage(message, CLONE_HELP_MESSAGE)
-        await auto_delete_message(message, reply_message)
+        await deleteMessage(message)
+        await one_minute_del(reply_message)
 
 
 @new_task
@@ -214,8 +215,8 @@ async def clone(client, message):
 
     if len(link) == 0:
         reply_message = await sendMessage(message, CLONE_HELP_MESSAGE)
-        await auto_delete_message(message, reply_message)
-        await delete_links(message)
+        await deleteMessage(message)
+        await one_minute_del(reply_message)
         return
 
     error_msg = []
@@ -225,13 +226,14 @@ async def clone(client, message):
         error_msg.extend(task_utilis_msg)
 
     if error_msg:
-        final_msg = f'Hey, <b>{tag}</b>,\n'
+        final_msg = f'Hey, <b>{tag}</b>!\n'
         for __i, __msg in enumerate(error_msg, 1):
             final_msg += f'\n<b>{__i}</b>: {__msg}\n'
         if error_button is not None:
             error_button = error_button.build_menu(2)
-        await sendMessage(message, final_msg, error_button)
         await delete_links(message)
+        force_m = await sendMessage(message, final_msg, error_button)
+        await five_minute_del(force_m)
         return
 
     if is_rclone_path(link):

@@ -3,7 +3,7 @@ from pyrogram.handlers import MessageHandler
 from pyrogram.filters import command
 
 from bot import bot, LOGGER
-from bot.helper.telegram_helper.message_utils import auto_delete_message, sendMessage
+from bot.helper.telegram_helper.message_utils import one_minute_del, sendMessage, deleteMessage
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
@@ -26,7 +26,8 @@ async def deletefile(_, message):
     else:
         msg = 'Send Gdrive link along with command or by replying to the link by command'
     reply_message = await sendMessage(message, msg)
-    await auto_delete_message(message, reply_message)
+    await deleteMessage(message)
+    await one_minute_del(reply_message)
 
 
 bot.add_handler(MessageHandler(deletefile, filters=command(
