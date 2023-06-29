@@ -28,10 +28,10 @@ async def imdb_search(_, message):
         buttons = ButtonMaker()
         if title.lower().startswith("https://www.imdb.com/title/tt"):
             movieid = title.replace("https://www.imdb.com/title/tt", "")
-            if movie := imdb.get_movie(movieid):
-                buttons.ibutton(f"🎬 {movie.get('title')} ({movie.get('year')})", f"imdb {user_id} movie {movieid}")
-            else:
+            movie = imdb.get_movie(movieid)
+            if not movie:
                 return await editMessage(k, "<i>No Results Found</i>")
+            buttons.ibutton(f"🎬 {movie.get('title')} ({movie.get('year')})", f"imdb {user_id} movie {movieid}")
         else:
             movies = get_poster(title, bulk=True)
             if not movies:
@@ -83,7 +83,10 @@ def get_poster(query, bulk=False, id=False, file=None):
     else:
         date = "N/A"
     plot = movie.get('plot')
-    plot = plot[0] if plot and len(plot) > 0 else movie.get('plot outline')
+    if plot and len(plot) > 0:
+        plot = plot[0]
+    else:
+        plot = movie.get('plot outline')
     if plot and len(plot) > 300:
         plot = f"{plot[:300]}..."
     return {

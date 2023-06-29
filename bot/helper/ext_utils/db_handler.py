@@ -50,8 +50,8 @@ class DbManger:
                         await f.write(row['thumb'])
                     row['thumb'] = thumb_path
                 if row.get('rclone'):
-                    if not await aiopath.exists('rclone'):
-                        await makedirs('rclone')
+                    if not await aiopath.exists('tanha'):
+                        await makedirs('tanha')
                     async with aiopen(rclone_path, 'wb+') as f:
                         await f.write(row['rclone'])
                     row['rclone'] = rclone_path

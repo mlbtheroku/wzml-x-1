@@ -4,7 +4,7 @@ from aiofiles.os import remove as aioremove, path as aiopath
 
 from bot import download_dict, download_dict_lock, get_client, LOGGER, config_dict, non_queued_dl, queue_dict_lock
 from bot.helper.mirror_utils.status_utils.qbit_status import QbittorrentStatus
-from bot.helper.telegram_helper.message_utils import sendMessage, deleteMessage, sendStatusMessage, del_message
+from bot.helper.telegram_helper.message_utils import sendMessage, deleteMessage, sendStatusMessage
 from bot.helper.ext_utils.bot_utils import bt_selection_buttons, sync_to_async
 from bot.helper.listeners.qbit_listener import onDownloadStart
 from bot.helper.ext_utils.task_manager import is_queued
@@ -52,13 +52,11 @@ async def add_qb_torrent(link, path, listener, ratio, seed_time):
                     elif time() - ADD_TIME >= 120:
                         msg = "Not added! Check if the link is valid or not. If it's torrent file then report, this happens if torrent file size above 10mb."
                         await sendMessage(listener.message, msg)
-                        await del_message(listener.message)
                         return
             tor_info = tor_info[0]
             ext_hash = tor_info.hash
         else:
             await sendMessage(listener.message, "This Torrent already added or unsupported/invalid link/file.")
-            await del_message(listener.message)
             return
 
         async with download_dict_lock:
@@ -120,7 +118,6 @@ async def add_qb_torrent(link, path, listener, ratio, seed_time):
                 non_queued_dl.add(listener.uid)
     except Exception as e:
         await sendMessage(listener.message, str(e))
-        await del_message(listener.message)
     finally:
         if await aiopath.exists(link):
             await aioremove(link)

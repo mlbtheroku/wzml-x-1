@@ -24,12 +24,14 @@ class style:
     # ---------------------
 
     # async def __msg_to_reply(self): ---> pyrogramEngine.py
-    L_PM_START =            "➲ <b><u>Leech Started :</u></b>\n┃\n┖ <b>Source :</b> {msg_link}"
-    L_LOG_START =           "➲ <b><u>Leech Started :</u></b>\n┃\n┠ <b>User :</b> {mention} ( {uid} )\n┖ <b>Source :</b> {msg_link}"
+    L_PM_START =            "➲ <b><u>Leech Started :</u></b>\n┃\n┖ <b>Link:</b> <a href='{msg_link}'>Click Here</a>"
+    L_LOG_START =           "➲ <b><u>Leech Started :</u></b>\n┃\n┠ <b>User :</b> {mention} ( #ID{uid} )\n┖ <b>Source :</b> <a href='{msg_link}'>Click Here</a>"
 
     # async def onUploadComplete(): ---> tasks_listener.py
     NAME =                  '{Name}\n\n'
     SIZE =                  '<b>• Size: </b>{Size}\n'
+    ELAPSE =                '<b>• Elapsed: </b>{Time}\n'
+    MODE =                  '<b>• Mode: </b>{Mode}\n'
 
     # ----- LEECH -------
     L_TOTAL_FILES =         '<b>• Total files: </b>{Files}\n'
@@ -48,14 +50,16 @@ class style:
     M_BOT_MSG =             '<b>Links has sent to your inbox</b>'
     
     # ----- BUTTONS -------
-    CLOUD_LINK =      'Drive Link'
+    CLOUD_LINK =      'Cloud Link'
     SAVE_MSG =        'Save Message'
     RCLONE_LINK =     'Rclone Link'
     DDL_LINK =        '{Serv} Link'
+    SOURCE_URL =      'Source Link'
     INDEX_LINK =      'Index Link'
     VIEW_LINK =       'View Link'
     CHECK_PM =        'View in inbox'
-    CHECK_LL =        'View in leech log'
+    CHECK_LL =        'View in Leech Log'
+    CHECK_ML =        'View in Mirror Log'
     MEDIAINFO_LINK =  'MediaInfo'
     # ---------------------
 
@@ -106,6 +110,9 @@ class style:
     MIRROR = '''<b><u>Mirror Settings : {NAME}</u></b>
 
 <b>• RClone Config :</b> <i>{RCLONE}</i>
+<b>• Mirror Prefix :</b> <code>{MPREFIX}</code>
+<b>• Mirror Suffix :</b> <code>{MSUFFIX}</code>
+<b>• Mirror Remname :</b> <code>{MREMNAME}</code>
 <b>• DDL Server(s) :</b> <i>{DDL_SERVER}</i>
 <b>• Daily Mirror :</b> <code>{DM}</code> per day'''
 

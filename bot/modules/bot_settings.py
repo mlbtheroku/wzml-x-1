@@ -41,7 +41,8 @@ default_values = {'AUTO_DELETE_MESSAGE_DURATION': 30,
                   'BOT_LANG': 'en',
                   'IMG_PAGE': 1,
                   }
-bool_vars = ['AS_DOCUMENT', 'BOT_PM', 'STOP_DUPLICATE',                       'SET_COMMANDS', 'SAVE_MSG', 'IS_TEAM_DRIVE',                     'SHOW_MEDIAINFO', 'USE_SERVICE_ACCOUNTS',                        'WEB_PINCODE', 'EQUAL_SPLITS', 'DISABLE_DRIVE_LINK',             'SHOW_LIMITS']
+bool_vars = ['AS_DOCUMENT', 'BOT_PM', 'STOP_DUPLICATE', 'SET_COMMANDS', 'SAVE_MSG', 'SHOW_MEDIAINFO', 'SOURCE_LINK',
+             'IS_TEAM_DRIVE', 'USE_SERVICE_ACCOUNTS', 'WEB_PINCODE', 'EQUAL_SPLITS', 'DISABLE_DRIVE_LINK', 'DELETE_LINKS', 'SHOW_LIMITS']
 
 
 async def load_config():
@@ -60,6 +61,9 @@ async def load_config():
     if len(TELEGRAM_HASH) == 0:
         TELEGRAM_HASH = config_dict['TELEGRAM_HASH']
 
+    BOT_MAX_TASKS = environ.get('BOT_MAX_TASKS', '')
+    BOT_MAX_TASKS = '' if len(BOT_MAX_TASKS) == 0 else int(BOT_MAX_TASKS)
+    
     OWNER_ID = environ.get('OWNER_ID', '')
     OWNER_ID = config_dict['OWNER_ID'] if len(OWNER_ID) == 0 else int(OWNER_ID)
 
@@ -149,6 +153,18 @@ async def load_config():
     if len(LEECH_FILENAME_REMNAME) == 0:
         LEECH_FILENAME_REMNAME = ''
 
+    MIRROR_FILENAME_PREFIX = environ.get('MIRROR_FILENAME_PREFIX', '')
+    if len(MIRROR_FILENAME_PREFIX) == 0:
+        MIRROR_FILENAME_PREFIX = ''
+
+    MIRROR_FILENAME_SUFFIX = environ.get('MIRROR_FILENAME_SUFFIX', '')
+    if len(MIRROR_FILENAME_SUFFIX) == 0:
+        MIRROR_FILENAME_SUFFIX = ''
+
+    MIRROR_FILENAME_REMNAME = environ.get('MIRROR_FILENAME_REMNAME', '')
+    if len(MIRROR_FILENAME_REMNAME) == 0:
+        MIRROR_FILENAME_REMNAME = ''
+        
     SEARCH_PLUGINS = environ.get('SEARCH_PLUGINS', '')
     if len(SEARCH_PLUGINS) == 0:
         SEARCH_PLUGINS = ''
@@ -262,6 +278,12 @@ async def load_config():
 
     SHOW_MEDIAINFO = environ.get('SHOW_MEDIAINFO', '')
     SHOW_MEDIAINFO = SHOW_MEDIAINFO.lower() == 'true'
+    
+    SOURCE_LINK = environ.get('SOURCE_LINK', '')
+    SOURCE_LINK = SOURCE_LINK.lower() == 'true'
+
+    DELETE_LINKS = environ.get('DELETE_LINKS', '')
+    DELETE_LINKS = DELETE_LINKS.lower() == 'true'
 
     EQUAL_SPLITS = environ.get('EQUAL_SPLITS', '')
     EQUAL_SPLITS = EQUAL_SPLITS.lower() == 'true'
@@ -480,9 +502,11 @@ async def load_config():
                         'BASE_URL': BASE_URL,
                         'BASE_URL_PORT': BASE_URL_PORT,
                         'BOT_TOKEN': BOT_TOKEN,
+                        'BOT_MAX_TASKS': BOT_MAX_TASKS,
                         'CAP_FONT': CAP_FONT,
                         'CMD_SUFFIX': CMD_SUFFIX,
                         'DATABASE_URL': DATABASE_URL,
+                        'DELETE_LINKS': DELETE_LINKS,
                         'DEFAULT_UPLOAD': DEFAULT_UPLOAD,
                         'DOWNLOAD_DIR': DOWNLOAD_DIR,
                         'STORAGE_THRESHOLD': STORAGE_THRESHOLD,
@@ -517,6 +541,9 @@ async def load_config():
                         'LEECH_FILENAME_SUFFIX': LEECH_FILENAME_SUFFIX,
                         'LEECH_FILENAME_CAPTION': LEECH_FILENAME_CAPTION,
                         'LEECH_FILENAME_REMNAME': LEECH_FILENAME_REMNAME,
+                        'MIRROR_FILENAME_PREFIX': MIRROR_FILENAME_PREFIX,
+                        'MIRROR_FILENAME_SUFFIX': MIRROR_FILENAME_SUFFIX,
+                        'MIRROR_FILENAME_REMNAME': MIRROR_FILENAME_REMNAME,
                         'LEECH_SPLIT_SIZE': LEECH_SPLIT_SIZE,
                         'LOGIN_PASS': LOGIN_PASS,
                         'TOKEN_TIMEOUT': TOKEN_TIMEOUT,
@@ -543,6 +570,7 @@ async def load_config():
                         'SET_COMMANDS': SET_COMMANDS,
                         'SHOW_LIMITS': SHOW_LIMITS,
                         'SHOW_MEDIAINFO': SHOW_MEDIAINFO,
+                        'SOURCE_LINK': SOURCE_LINK,
                         'STATUS_LIMIT': STATUS_LIMIT,
                         'STATUS_UPDATE_INTERVAL': STATUS_UPDATE_INTERVAL,
                         'STOP_DUPLICATE': STOP_DUPLICATE,
@@ -580,9 +608,8 @@ async def get_buttons(key=None, edit_type=None, edit_mode=None, mess=None):
         buttons.ibutton('Back', "botset back")
         buttons.ibutton('Close', "botset close")
         for x in range(0, len(config_dict)-1, 10):
-            buttons.ibutton(
-                f'{int(x/10)}', f"botset start var {x}", position='footer')
-        msg = f'Config Variables | Page: {int(START/10)}'
+            buttons.ibutton(f'{int(x/10)+1}', f"botset start var {x}", position='footer')
+        msg = f'<b>Config Variables<b> | Page: {int(START/10)+1}'
     elif key == 'private':
         buttons.ibutton('Back', "botset back")
         buttons.ibutton('Close', "botset close")
@@ -601,9 +628,8 @@ Timeout: 60 sec'''
         buttons.ibutton('Back', "botset back")
         buttons.ibutton('Close', "botset close")
         for x in range(0, len(aria2_options)-1, 10):
-            buttons.ibutton(
-                f'{int(x/10)}', f"botset start aria {x}", position='footer')
-        msg = f'Aria2c Options | Page: {int(START/10)} | State: {STATE}'
+            buttons.ibutton(f'{int(x/10)+1}', f"botset start aria {x}", position='footer')
+        msg = f'Aria2c Options | Page: {int(START/10)+1} | State: {STATE}'
     elif key == 'qbit':
         for k in list(qbit_options.keys())[START:10+START]:
             buttons.ibutton(k, f"botset editqbit {k}")
@@ -615,8 +641,8 @@ Timeout: 60 sec'''
         buttons.ibutton('Close', "botset close")
         for x in range(0, len(qbit_options)-1, 10):
             buttons.ibutton(
-                f'{int(x/10)}', f"botset start qbit {x}", position='footer')
-        msg = f'Qbittorrent Options | Page: {int(START/10)} | State: {STATE}'
+                f'{int(x/10)+1}', f"botset start qbit {x}", position='footer')
+        msg = f'Qbittorrent Options | Page: {int(START/10)+1} | State: {STATE}'
     elif edit_type == 'editvar':
         msg = f'<b>Variable:</b> <code>{key}</code>\n\n'
         msg += f'<b>Description:</b> {default_desp.get(key, "No Description Provided")}\n\n'
