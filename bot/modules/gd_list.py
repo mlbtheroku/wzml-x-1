@@ -62,7 +62,7 @@ async def select_type(_, query):
     await editMessage(message, BotTheme('LIST_SEARCHING', NAME=key))
     await _list_drive(key, message, item_type, isRecursive)
 
-@new_thread
+@new_task
 async def drive_list(_, message):
     if len(message.text.split()) == 1:
         reply_message = await sendMessage(message, 'Send a search key along with command')
