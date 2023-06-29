@@ -262,7 +262,7 @@ class GoogleDriveHelper:
         directory_name = async_to_sync(format_filename, directory_name, self.__user_id, isMirror=True)
         file_metadata = {
             "name": directory_name,
-            "description": config_dict['GD_INFO'],
+            "description": 'Uploaded by Luna Mirror',
             "mimeType": self.__G_DRIVE_DIR_MIME_TYPE
         }
         if dest_id is not None:
@@ -283,7 +283,7 @@ class GoogleDriveHelper:
         # File body description
         file_metadata = {
             'name': file_name,
-            'description': config_dict['GD_INFO'],
+            'description': 'Uploaded by Luna Mirror',
             'mimeType': mime_type,
         }
         if dest_id is not None:
