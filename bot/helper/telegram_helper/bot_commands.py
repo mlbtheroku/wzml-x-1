@@ -40,7 +40,6 @@ class _BotCommands:
         self.LoginCommand = 'login'
         self.AddImageCommand = f'addimg{CMD_SUFFIX}'
         self.ImagesCommand = f'images{CMD_SUFFIX}'
-        self.IMDBCommand = f'imdb{CMD_SUFFIX}'
         self.AniListCommand = f'anime{CMD_SUFFIX}'
         self.AnimeHelpCommand = f'animehelp{CMD_SUFFIX}'
         self.MediaInfoCommand = f'mediainfo{CMD_SUFFIX}'

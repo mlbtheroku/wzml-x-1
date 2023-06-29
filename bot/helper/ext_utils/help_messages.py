@@ -128,7 +128,6 @@ default_desp = {'AS_DOCUMENT': 'Default type of Telegram file upload. Default is
                 'IMAGES': 'Add multiple telgraph(graph.org) image links that are seperated by spaces.',
                 'IMG_SEARCH': 'Put Keyword to Download Images. Sperarte each name by , like anime, iron man, god of war',
                 'IMG_PAGE': 'Set the page value for downloading a image. Each page have approx 70 images. Deafult is 1. Int',
-                'IMDB_TEMPLATE': 'Set Bot Default IMDB Template. HTML Tags, Emojis supported. str',
                 'USER_MAX_TASKS': 'Limit the Maximum task for users of group at a time. use the Int',
                 'DAILY_TASK_LIMIT': 'Maximum task a user can do in one day. use the Int',
                 'DISABLE_DRIVE_LINK': 'Disable drive link button. Default is False. Bool',
