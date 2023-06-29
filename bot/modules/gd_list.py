@@ -68,6 +68,7 @@ async def drive_list(_, message):
         reply_message = await sendMessage(message, 'Send a search key along with command')
         await delete_links(message)
         await one_minute_del(reply_message)
+        return
     user_id = message.from_user.id
     msg, btn = checking_access(user_id)
     if msg is not None:
