@@ -66,8 +66,6 @@ async def select_type(_, query):
 async def drive_list(_, message):
     if len(message.text.split()) == 1:
         return await sendMessage(message, 'Send a search key along with command')
-    if not message.from_user:
-        return
     user_id = message.from_user.id
     msg, btn = checking_access(user_id)
     if msg is not None:
