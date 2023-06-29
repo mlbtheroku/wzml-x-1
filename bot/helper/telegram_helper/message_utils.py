@@ -174,6 +174,9 @@ async def deleteMessage(message):
     except Exception as e:
         LOGGER.error(str(e))
 
+async def one_minute_del(message):
+    await sleep(60)
+    await deleteMessage(message)
 
 async def auto_delete_message(cmd_message=None, bot_message=None):
     if config_dict['AUTO_DELETE_MESSAGE_DURATION'] != -1:
