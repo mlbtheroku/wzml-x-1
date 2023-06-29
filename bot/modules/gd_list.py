@@ -9,7 +9,7 @@ from bot.helper.telegram_helper.message_utils import sendMessage, editMessage
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.button_build import ButtonMaker
-from bot.helper.ext_utils.bot_utils import sync_to_async, new_task, get_telegraph_list
+from bot.helper.ext_utils.bot_utils import sync_to_async, new_task, get_telegraph_list, checking_access
 from bot.helper.themes import BotTheme
 
 
@@ -66,9 +66,15 @@ async def select_type(_, query):
 async def drive_list(_, message):
     if len(message.text.split()) == 1:
         return await sendMessage(message, 'Send a search key along with command')
+    if not message.from_user:
+        return
     user_id = message.from_user.id
+    msg, btn = checking_access(user_id)
+    if msg is not None:
+        await sendMessage(message, msg, btn.build_menu(1))
+        return
     buttons = await list_buttons(user_id)
-    await sendMessage(message, 'Choose list options:', buttons, 'IMAGES')
+    await sendMessage(message, 'Choose list options:', buttons)
 
 bot.add_handler(MessageHandler(drive_list, filters=command(
     BotCommands.ListCommand) & CustomFilters.authorized))

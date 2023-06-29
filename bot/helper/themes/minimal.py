@@ -28,26 +28,26 @@ class style:
     L_LOG_START =           "➲ <b><u>Leech Started :</u></b>\n┃\n┠ <b>User :</b> {mention} ( #ID{uid} )\n┖ <b>Source :</b> <a href='{msg_link}'>Click Here</a>"
 
     # async def onUploadComplete(): ---> tasks_listener.py
-    NAME =                  '{Name}\n\n'
-    SIZE =                  '<b>• Size: </b>{Size}\n'
-    ELAPSE =                '<b>• Elapsed: </b>{Time}\n'
-    MODE =                  '<b>• Mode: </b>{Mode}\n'
+    NAME =                 '{Name}\n\n'
+    SIZE =                 '<b>• Size: </b>{Size}\n'
+    ELAPSE =               '<b>• Elapsed: </b>{Time}\n'
+    MODE =                 '<b>• Mode: </b>{Mode}\n'
 
     # ----- LEECH -------
-    L_TOTAL_FILES =         '<b>• Total files: </b>{Files}\n'
-    L_CORRUPTED_FILES =     '<b>• Corrupted files: </b>{Corrupt}\n'
-    L_CC =                  '<b>• Leeched by: </b>{Tag}\n\n'
-    PM_BOT_MSG =            '<b>Files are send above</b>'
-    L_BOT_MSG =             '<b>Files has sent to your inbox</b>'
-    L_LL_MSG =              '<b>Files are sent. Access via links...</b>'
+    L_TOTAL_FILES =        '<b>• Total files: </b>{Files}\n'
+    L_CORRUPTED_FILES =    '<b>• Corrupted files: </b>{Corrupt}\n'
+    L_CC =                 '<b>• Leeched by: </b>{Tag}\n\n'
+    PM_BOT_MSG =           '<b>Files are send above</b>'
+    L_BOT_MSG =            '<b>Files has sent to your inbox</b>'
+    L_LL_MSG =             '<b>Files are sent. Access via links</b>'
     
     # ----- MIRROR -------
-    M_TYPE =                '<b>• Type: </b>{Mimetype}\n'
-    M_SUBFOLD =             '<b>• SubFolders: </b>{Folder}\n'
-    TOTAL_FILES =           '<b>• Files: </b>{Files}\n'
-    RCPATH =                '<b>• Path: </b><code>{RCpath}</code>\n'
-    M_CC =                  '<b>• Uploaded by: {Tag}\n\n'
-    M_BOT_MSG =             '<b>Links has sent to your inbox</b>'
+    M_TYPE =               '<b>• Type: </b>{Mimetype}\n'
+    M_SUBFOLD =            '<b>• SubFolders: </b>{Folder}\n'
+    TOTAL_FILES =          '<b>• Files: </b>{Files}\n'
+    RCPATH =               '<b>• Path: </b><code>{RCpath}</code>\n'
+    M_CC =                 '<b>• Uploaded by: {Tag}\n\n'
+    M_BOT_MSG =            '<b>Links has sent to your inbox</b>'
     
     # ----- BUTTONS -------
     CLOUD_LINK =      'Cloud Link'
@@ -69,7 +69,7 @@ class style:
 
     # async def countNode(_, message): ----> gd_count.py
     COUNT_MSG = '<b>Counting:</b> <code>{LINK}</code>'
-    COUNT_NAME = '{COUNT_NAME}\n'
+    COUNT_NAME = '{COUNT_NAME}\n\n'
     COUNT_SIZE = '<b>• Size: </b>{COUNT_SIZE}\n'
     COUNT_TYPE = '<b>• Type: </b>{COUNT_TYPE}\n'
     COUNT_SUB =  '<b>• SubFolders: </b>{COUNT_SUB}\n'
@@ -84,7 +84,7 @@ class style:
     # ---------------------
 
     # async def mirror_status(_, message): ----> status.py
-    NO_ACTIVE_DL = '''<code>No Active Downloads!</code>
+    NO_ACTIVE_DL = '''No Active Downloads!
     
 <b>• CPU:</b> {cpu}% | <b>FREE:</b> {free}
 <b>• RAM:</b> {ram} | <b>UPTIME:</b> {uptime}
