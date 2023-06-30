@@ -74,10 +74,12 @@ async def drive_list(_, message):
     if msg is not None:
         reply_message = await sendMessage(message, msg, btn.build_menu(1))
         await delete_links(message)
-        five_minute_del(reply_message)
+        await five_minute_del(reply_message)
         return
     buttons = await list_buttons(user_id)
-    await sendMessage(message, 'Choose list options:', buttons)
+    reply_message = await sendMessage(message, 'Choose list options:', buttons)
+    await delete_links(message)
+    await five_minute_del(reply_message)
 
 bot.add_handler(MessageHandler(drive_list, filters=command(
     BotCommands.ListCommand) & CustomFilters.authorized))

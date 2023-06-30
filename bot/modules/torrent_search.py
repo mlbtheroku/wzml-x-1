@@ -225,25 +225,35 @@ async def torrentSearch(_, message):
         await delete_links(message)
         await one_minute_del(reply_message)
     elif len(key) == 1 and SITES is None:
-        await sendMessage(message, "Send a search key along with command")
+        reply_message = await sendMessage(message, "Send a search key along with command")
+        await delete_links(message)
+        await one_minute_del(reply_message)
     elif len(key) == 1:
         buttons.ibutton('Trending', f"torser {user_id} apitrend")
         buttons.ibutton('Recent', f"torser {user_id} apirecent")
         buttons.ibutton("Cancel", f"torser {user_id} cancel")
         button = buttons.build_menu(2)
-        await sendMessage(message, "Send a search key along with command", button)
+        reply_message = await sendMessage(message, "Send a search key along with command", button)
+        await delete_links(message)
+        await five_minute_del(reply_message)
     elif SITES is not None and SEARCH_PLUGINS:
         buttons.ibutton('Api', f"torser {user_id} apisearch")
         buttons.ibutton('Plugins', f"torser {user_id} plugin")
         buttons.ibutton("Cancel", f"torser {user_id} cancel")
         button = buttons.build_menu(2)
-        await sendMessage(message, 'Choose tool to search:', button)
+        reply_message = await sendMessage(message, 'Choose tool to search:', button)
+        await delete_links(message)
+        await five_minute_del(reply_message)
     elif SITES is not None:
         button = __api_buttons(user_id, "apisearch")
-        await sendMessage(message, 'Choose site to search | API:', button)
+        reply_message = await sendMessage(message, 'Choose site to search | API:', button)
+        await delete_links(message)
+        await five_minute_del(reply_message)
     else:
         button = await __plugin_buttons(user_id)
-        await sendMessage(message, 'Choose site to search | Plugins:', button)
+        reply_message = await sendMessage(message, 'Choose site to search | Plugins:', button)
+        await delete_links(message)
+        await five_minute_del(reply_message)
 
 
 @new_task
