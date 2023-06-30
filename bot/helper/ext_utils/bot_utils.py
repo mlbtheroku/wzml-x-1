@@ -444,14 +444,14 @@ async def getdailytasks(user_id, increase_task=False, upleech=0, upmirror=0, che
 
 def checking_access(user_id, button=None):
     token_timeout = config_dict['TOKEN_TIMEOUT']
-    if not config_dict['TOKEN_TIMEOUT'] or bool(user_id == OWNER_ID or user_id in user_data and user_data[user_id].get('is_sudo')):
+    if not token_timeout or bool(user_id == OWNER_ID or user_id in user_data and user_data[user_id].get('is_sudo')):
         return None, button
     user_data.setdefault(user_id, {})
     data = user_data[user_id]
     expire = data.get('time')
     if config_dict['LOGIN_PASS'] is not None and data.get('token', '') == config_dict['LOGIN_PASS']:
         return None, button
-    isExpired = (expire is None or expire is not None and (time() - expire) > config_dict['TOKEN_TIMEOUT'])
+    isExpired = (expire is None or expire is not None and (time() - expire) > token_timeout)
     if isExpired:
         token = data['token'] if expire is None and 'token' in data else str(uuid4())
         if expire is not None:
