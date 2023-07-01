@@ -41,7 +41,7 @@ default_values = {'DEFAULT_UPLOAD': 'gd',
                   'IMG_PAGE': 1,
                   }
 bool_vars = ['AS_DOCUMENT', 'BOT_PM', 'STOP_DUPLICATE', 'SET_COMMANDS', 'SAVE_MSG', 'SHOW_MEDIAINFO', 'SOURCE_LINK',
-             'IS_TEAM_DRIVE', 'USE_SERVICE_ACCOUNTS', 'WEB_PINCODE', 'EQUAL_SPLITS', 'DISABLE_DRIVE_LINK', 'SHOW_LIMITS']
+             'IS_TEAM_DRIVE', 'USE_SERVICE_ACCOUNTS', 'WEB_PINCODE', 'EQUAL_SPLITS', 'DISABLE_DRIVE_LINK']
 
 
 async def load_config():
@@ -256,9 +256,6 @@ async def load_config():
     IS_TEAM_DRIVE = environ.get('IS_TEAM_DRIVE', '')
     IS_TEAM_DRIVE = IS_TEAM_DRIVE.lower() == 'true'
 
-    SHOW_LIMITS = environ.get('SHOW_LIMITS', '')
-    SHOW_LIMITS = SHOW_LIMITS.lower() == 'true'
-    
     USE_SERVICE_ACCOUNTS = environ.get('USE_SERVICE_ACCOUNTS', '')
     USE_SERVICE_ACCOUNTS = USE_SERVICE_ACCOUNTS.lower() == 'true'
 
@@ -391,10 +388,6 @@ async def load_config():
     TOKEN_TIMEOUT = environ.get('TOKEN_TIMEOUT', '')
     TOKEN_TIMEOUT = int(TOKEN_TIMEOUT) if TOKEN_TIMEOUT.isdigit() else ''
 
-    LOGIN_PASS = environ.get('LOGIN_PASS', '')
-    if len(LOGIN_PASS) == 0:
-        LOGIN_PASS = None
-
     DEF_ANI_TEMP  = environ.get('ANIME_TEMPLATE', '')
     if len(DEF_ANI_TEMP) == 0:
         DEF_ANI_TEMP = '''<b>{ro_title}</b>({na_title})
@@ -516,7 +509,6 @@ async def load_config():
                         'MIRROR_FILENAME_SUFFIX': MIRROR_FILENAME_SUFFIX,
                         'MIRROR_FILENAME_REMNAME': MIRROR_FILENAME_REMNAME,
                         'LEECH_SPLIT_SIZE': LEECH_SPLIT_SIZE,
-                        'LOGIN_PASS': LOGIN_PASS,
                         'TOKEN_TIMEOUT': TOKEN_TIMEOUT,
                         'MEDIA_GROUP': MEDIA_GROUP,
                         'MEGA_EMAIL': MEGA_EMAIL,
@@ -539,7 +531,6 @@ async def load_config():
                         'SEARCH_LIMIT': SEARCH_LIMIT,
                         'SEARCH_PLUGINS': SEARCH_PLUGINS,
                         'SET_COMMANDS': SET_COMMANDS,
-                        'SHOW_LIMITS': SHOW_LIMITS,
                         'SHOW_MEDIAINFO': SHOW_MEDIAINFO,
                         'SOURCE_LINK': SOURCE_LINK,
                         'STATUS_LIMIT': STATUS_LIMIT,
@@ -618,7 +609,7 @@ Timeout: 60 sec'''
         msg = f'<b>Variable:</b> <code>{key}</code>\n\n'
         msg += f'<b>Description:</b> {default_desp.get(key, "No Description Provided")}\n\n'
         if mess.chat.type == ChatType.PRIVATE:
-            msg += f'<b>Value:</b> <spoiler> {config_dict.get(key, "None")} </spoiler>\n\n'
+            msg += f'<b>Value:</b> {config_dict.get(key, "None")}\n\n'
         else:
             buttons.ibutton('View Var Value',
                             f"botset showvar {key}", position="header")

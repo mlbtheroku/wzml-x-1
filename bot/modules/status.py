@@ -18,9 +18,10 @@ async def mirror_status(_, message):
         count = len(download_dict)
     if count == 0:
         currentTime = get_readable_time(time() - botStartTime)
-        free = get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)
-        msg = BotTheme('NO_ACTIVE_DL', cpu=cpu_percent(), free=free,
-                       ram=virtual_memory().percent, uptime=currentTime)
+        free = get_readable_file_size(disk_usage(config_dict['DOWNLOAD_DIR']).free)
+        msg = 'No Active Downloads !\n'
+        msg += f"\n<b>• Bot uptime</b>: {currentTime}"
+        msg += f"\n<b>• Free disk space</b>: {free}"
         reply_message = await sendMessage(message, msg)
         await deleteMessage(message)
         await one_minute_del(reply_message)
@@ -31,8 +32,7 @@ async def mirror_status(_, message):
             if Interval:
                 Interval[0].cancel()
                 Interval.clear()
-                Interval.append(setInterval(
-                    config_dict['STATUS_UPDATE_INTERVAL'], update_all_messages))
+                Interval.append(setInterval(config_dict['STATUS_UPDATE_INTERVAL'], update_all_messages))
 
 
 @new_task

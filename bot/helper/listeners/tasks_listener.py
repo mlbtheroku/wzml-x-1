@@ -65,7 +65,7 @@ class MirrorLeechListener:
         self.join = join
         self.leechlogmsg = None
         self.upload_details = {}
-        self.source_url = source_url if source_url.startswith('http') else "https://t.me/share/url?url=" + source_url
+        self.source_url = source_url if source_url and source_url.startswith('http') else ("https://t.me/share/url?url=" + source_url) if source_url else message.link
         self.__setModeEng()
 
     async def clean(self):

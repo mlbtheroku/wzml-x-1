@@ -164,6 +164,18 @@ class EngineStatus:
     STATUS_QUEUE = "Sleep v0"
     STATUS_RCLONE = "Rclone"
 
+def source(self):
+    if sender_chat := self.message.sender_chat:
+        source = sender_chat.title
+    else:
+        source = self.message.from_user.username or self.message.from_user.id
+    if reply_to := self.message.reply_to_message:
+        if sender_chat := reply_to.sender_chat:
+            source = reply_to.sender_chat.title
+        elif not reply_to.from_user.is_bot:
+            source = reply_to.from_user.username or reply_to.from_user.id
+    return source
+            
 
 def get_readable_message():
     msg = ''
@@ -177,7 +189,7 @@ def get_readable_message():
         globals()['PAGE_NO'] = PAGES
     for download in list(download_dict.values())[STATUS_START:STATUS_LIMIT+STATUS_START]:
         msg += f"{escape(f'{download.name()}')}\n"
-        msg += f"by {download.message.from_user.mention}\n\n"
+        msg += f"by {source(download)}\n\n"
         msg += f"<b>┌ {download.status()}...</b>"
         if download.status() not in [MirrorStatus.STATUS_SPLITTING, MirrorStatus.STATUS_SEEDING]:
             msg += f"\n<b>├ {get_progress_bar_string(download.progress())}</b> {download.progress()}"
@@ -449,8 +461,6 @@ def checking_access(user_id, button=None):
     user_data.setdefault(user_id, {})
     data = user_data[user_id]
     expire = data.get('time')
-    if config_dict['LOGIN_PASS'] is not None and data.get('token', '') == config_dict['LOGIN_PASS']:
-        return None, button
     isExpired = (expire is None or expire is not None and (time() - expire) > token_timeout)
     if isExpired:
         token = data['token'] if expire is None and 'token' in data else str(uuid4())

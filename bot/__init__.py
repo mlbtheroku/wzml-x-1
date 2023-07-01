@@ -315,9 +315,6 @@ MEDIA_GROUP = MEDIA_GROUP.lower() == 'true'
 BASE_URL_PORT = environ.get('BASE_URL_PORT', '')
 BASE_URL_PORT = 80 if len(BASE_URL_PORT) == 0 else int(BASE_URL_PORT)
 
-SHOW_LIMITS = environ.get('SHOW_LIMITS', '')
-SHOW_LIMITS = SHOW_LIMITS.lower() == 'true'
-
 BASE_URL = environ.get('BASE_URL', '').rstrip("/")
 if len(BASE_URL) == 0:
     log_warning('BASE_URL not provided!')
@@ -424,10 +421,6 @@ SET_COMMANDS = SET_COMMANDS.lower() == 'true'
 TOKEN_TIMEOUT = environ.get('TOKEN_TIMEOUT', '')
 TOKEN_TIMEOUT = int(TOKEN_TIMEOUT) if TOKEN_TIMEOUT.isdigit() else ''
 
-LOGIN_PASS = environ.get('LOGIN_PASS', '')
-if len(LOGIN_PASS) == 0:
-    LOGIN_PASS = None
-
 ANIME_TEMPLATE = environ.get('ANIME_TEMPLATE', '')
 if len(ANIME_TEMPLATE) == 0:
     ANIME_TEMPLATE = '''<b>{ro_title}</b>({na_title})
@@ -508,7 +501,6 @@ config_dict = {'ANIME_TEMPLATE': ANIME_TEMPLATE,
                'MIRROR_FILENAME_SUFFIX': MIRROR_FILENAME_SUFFIX,
                'MIRROR_FILENAME_REMNAME': MIRROR_FILENAME_REMNAME,
                'LEECH_SPLIT_SIZE': LEECH_SPLIT_SIZE,
-               'LOGIN_PASS': LOGIN_PASS,
                'TOKEN_TIMEOUT': TOKEN_TIMEOUT,
                'MDL_TEMPLATE': MDL_TEMPLATE,
                'MEDIA_GROUP': MEDIA_GROUP,
@@ -531,7 +523,6 @@ config_dict = {'ANIME_TEMPLATE': ANIME_TEMPLATE,
                'SEARCH_LIMIT': SEARCH_LIMIT,
                'SEARCH_PLUGINS': SEARCH_PLUGINS,
                'SET_COMMANDS': SET_COMMANDS,
-               'SHOW_LIMITS': SHOW_LIMITS,
                'SHOW_MEDIAINFO': SHOW_MEDIAINFO,
                'SOURCE_LINK': SOURCE_LINK,
                'STATUS_LIMIT': STATUS_LIMIT,

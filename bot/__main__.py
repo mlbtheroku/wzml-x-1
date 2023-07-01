@@ -41,6 +41,22 @@ async def stats(_, message):
     mem_p = memory.percent
     osUptime = get_readable_time(time() - boot_time())
     cpuUsage = cpu_percent(interval=0.5)
+    DIRECT_LIMIT = config_dict['DIRECT_LIMIT']
+    YTDLP_LIMIT = config_dict['YTDLP_LIMIT']
+    GDRIVE_LIMIT = config_dict['GDRIVE_LIMIT']
+    TORRENT_LIMIT = config_dict['TORRENT_LIMIT']
+    CLONE_LIMIT = config_dict['CLONE_LIMIT']
+    MEGA_LIMIT = config_dict['MEGA_LIMIT']
+    LEECH_LIMIT = config_dict['LEECH_LIMIT']
+    USER_MAX_TASKS = config_dict['USER_MAX_TASKS']
+    torrent_limit = '∞' if TORRENT_LIMIT == '' else f'{TORRENT_LIMIT}GB/Link'
+    clone_limit = '∞' if CLONE_LIMIT == '' else f'{CLONE_LIMIT}GB/Link'
+    gdrive_limit = '∞' if GDRIVE_LIMIT == '' else f'{GDRIVE_LIMIT}GB/Link'
+    mega_limit = '∞' if MEGA_LIMIT == '' else f'{MEGA_LIMIT}GB/Link'
+    leech_limit = '∞' if LEECH_LIMIT == '' else f'{LEECH_LIMIT}GB/Link'
+    user_task = '∞' if USER_MAX_TASKS == '' else f'{USER_MAX_TASKS} Tasks/user'
+    ytdlp_limit = '∞' if YTDLP_LIMIT == '' else f'{YTDLP_LIMIT}GB/Link'
+    direct_limit = '∞' if DIRECT_LIMIT == '' else f'{DIRECT_LIMIT}GB/Link'
     stats = f'<b>SYSTEM INFO</b>\n\n'\
             f'<code>• Bot uptime :</code> {currentTime}\n'\
             f'<code>• Sys uptime :</code> {osUptime}\n'\
@@ -48,33 +64,15 @@ async def stats(_, message):
             f'<code>• RAM usage  :</code> {mem_p}%\n'\
             f'<code>• Disk usage :</code> {disk}%\n'\
             f'<code>• Disk space :</code> {get_readable_file_size(free)}/{get_readable_file_size(total)}\n\n'\
-            
-    if config_dict['SHOW_LIMITS']:
-        DIRECT_LIMIT = config_dict['DIRECT_LIMIT']
-        YTDLP_LIMIT = config_dict['YTDLP_LIMIT']
-        GDRIVE_LIMIT = config_dict['GDRIVE_LIMIT']
-        TORRENT_LIMIT = config_dict['TORRENT_LIMIT']
-        CLONE_LIMIT = config_dict['CLONE_LIMIT']
-        MEGA_LIMIT = config_dict['MEGA_LIMIT']
-        LEECH_LIMIT = config_dict['LEECH_LIMIT']
-        USER_MAX_TASKS = config_dict['USER_MAX_TASKS']
-        torrent_limit = '∞' if TORRENT_LIMIT == '' else f'{TORRENT_LIMIT}GB/Link'
-        clone_limit = '∞' if CLONE_LIMIT == '' else f'{CLONE_LIMIT}GB/Link'
-        gdrive_limit = '∞' if GDRIVE_LIMIT == '' else f'{GDRIVE_LIMIT}GB/Link'
-        mega_limit = '∞' if MEGA_LIMIT == '' else f'{MEGA_LIMIT}GB/Link'
-        leech_limit = '∞' if LEECH_LIMIT == '' else f'{LEECH_LIMIT}GB/Link'
-        user_task = '∞' if USER_MAX_TASKS == '' else f'{USER_MAX_TASKS} Tasks/user'
-        ytdlp_limit = '∞' if YTDLP_LIMIT == '' else f'{YTDLP_LIMIT}GB/Link'
-        direct_limit = '∞' if DIRECT_LIMIT == '' else f'{DIRECT_LIMIT}GB/Link'
-        stats += f'<b>LIMITATIONS</b>\n\n'\
-                f'<code>• Torrent    :</code> {torrent_limit}\n'\
-                f'<code>• Gdrive     :</code> {gdrive_limit}\n'\
-                f'<code>• Ytdlp      :</code> {ytdlp_limit}\n'\
-                f'<code>• Direct     :</code> {direct_limit}\n'\
-                f'<code>• Leech      :</code> {leech_limit}\n'\
-                f'<code>• Clone      :</code> {clone_limit}\n'\
-                f'<code>• Mega       :</code> {mega_limit}\n'\
-                f'<code>• User tasks :</code> {user_task}\n\n'
+            f'<b>LIMITATIONS</b>\n\n'\
+            f'<code>• Torrent    :</code> {torrent_limit}\n'\
+            f'<code>• Gdrive     :</code> {gdrive_limit}\n'\
+            f'<code>• Ytdlp      :</code> {ytdlp_limit}\n'\
+            f'<code>• Direct     :</code> {direct_limit}\n'\
+            f'<code>• Leech      :</code> {leech_limit}\n'\
+            f'<code>• Clone      :</code> {clone_limit}\n'\
+            f'<code>• Mega       :</code> {mega_limit}\n'\
+            f'<code>• User tasks :</code> {user_task}\n\n'
     reply_message = await sendMessage(message, stats, photo='IMAGES')
     await deleteMessage(message)
     await one_minute_del(reply_message)
@@ -98,14 +96,11 @@ async def start(client, message):
             return await sendMessage(message, '<b>Temporary Token is not yours!</b>\n\n<i>Kindly generate your own.</i>')
         data = user_data.get(userid, {})
         if 'token' not in data or data['token'] != input_token:
-            return await sendMessage(message, '<b>Temporary Token already used!</b>\n\n<i>Kindly generate a new one.</i>')
-        elif config_dict['LOGIN_PASS'] is not None and data['token'] == config_dict['LOGIN_PASS']:
-            return await sendMessage(message, '<b>Bot Already Logged In via Password</b>\n\n<i>No Need to Accept Temp Tokens.</i>')
-        buttons.ibutton('Activate Temporary Token', f'pass {input_token}', 'header')
+            return await sendMessage(message, '<b>This token already used!</b>\n\n<i>Kindly collect a new one.</i>')
+        buttons.ibutton('Activate token', f'pass {input_token}', 'header')
         reply_markup = buttons.build_menu(2)
-        msg = '<b><u>Generated Temporary Login Token!</u></b>\n\n'
-        msg += f'<b>Temp Token:</b> <code>{input_token}</code>\n\n'
-        msg += f'<b>Validity:</b> {format_validity_time(int(config_dict["TOKEN_TIMEOUT"]))}'
+        msg = 'Your token has successfully generated!\n\n'
+        msg += f'It will valid for {format_validity_time(int(config_dict["TOKEN_TIMEOUT"]))}'
         return await sendMessage(message, msg, reply_markup)
     elif await CustomFilters.authorized(client, message):
         start_string = BotTheme('ST_MSG', help_command=f"/{BotCommands.HelpCommand}")
@@ -120,29 +115,14 @@ async def token_callback(_, query):
     input_token = query.data.split()[1]
     data = user_data.get(user_id, {})
     if 'token' not in data or data['token'] != input_token:
-        return await query.answer('Already Used, Generate New One', show_alert=True)
+        return await query.answer('Already used, collect new one', show_alert=True)
     update_user_ldata(user_id, 'token', str(uuid4()))
     update_user_ldata(user_id, 'time', time())
-    await query.answer('Activated Temporary Token!', show_alert=True)
+    await query.answer('Token activated!', show_alert=True)
     kb = query.message.reply_markup.inline_keyboard[1:]
     kb.insert(0, [InlineKeyboardButton('Activated', callback_data='pass activated')])
     await query.edit_message_reply_markup(InlineKeyboardMarkup(kb))
     
-async def login(_, message):
-    if config_dict['LOGIN_PASS'] is None:
-        return
-    elif len(message.command) > 1:
-        user_id = message.from_user.id
-        input_pass = message.command[1]
-        if user_data.get(user_id, {}).get('token', '') == config_dict['LOGIN_PASS']:
-            return await sendMessage(message, '<b>Already Bot Login In!</b>')
-        if input_pass != config_dict['LOGIN_PASS']:
-            return await sendMessage(message, '<b>Invalid Password!</b>\n\nKindly put the correct Password .')
-        update_user_ldata(user_id, 'token', config_dict['LOGIN_PASS'])
-        return await sendMessage(message, '<b>Bot Permanent Login Successfully!</b>')
-    else:
-        await sendMessage(message, '<b>Bot Login Usage :</b>\n\n<code>/cmd {password}</code>')
-
 async def restart(client, message):
     restart_message = await sendMessage(message, BotTheme('RESTARTING'))
     if scheduler.running:
@@ -259,7 +239,7 @@ async def restart_notification():
             for cid, data in notifier_dict.items():
                 msg = BotTheme('RESTART_SUCCESS', time=now.strftime('%I:%M:%S %p'), date=now.strftime('%d/%m/%y'))if cid == chat_id else BotTheme('RESTARTED')
                 for tag, links in data.items():
-                    msg += f"\n\n➲ {tag}: "
+                    msg += f"\n\n{tag}: "
                     for index, link in enumerate(links, start=1):
                         msg += f" <a href='{link}'>{index}</a> |"
                         if len(msg.encode()) > 4000:
@@ -284,8 +264,6 @@ async def main():
         start, filters=command(BotCommands.StartCommand) & private))
     bot.add_handler(CallbackQueryHandler(
         token_callback, filters=regex(r'^pass')))
-    bot.add_handler(MessageHandler(
-        login, filters=command(BotCommands.LoginCommand) & private))
     bot.add_handler(MessageHandler(log, filters=command(
         BotCommands.LogCommand) & CustomFilters.sudo))
     bot.add_handler(MessageHandler(restart, filters=command(
