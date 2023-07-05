@@ -10,7 +10,7 @@ from json import loads
 from bot import LOGGER, download_dict, download_dict_lock, config_dict, bot
 from bot.helper.ext_utils.task_manager import limit_checker, task_utils
 from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
-from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, deleteMessage, sendStatusMessage, delete_links, one_minute_del, five_minute_del
+from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, deleteMessage, sendStatusMessage, delete_links, one_minute_del, five_minute_del, isAdmin
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.mirror_utils.status_utils.gdrive_status import GdriveStatus
@@ -80,7 +80,7 @@ async def rcloneNode(client, message, link, dst_path, rcf, tag):
         name = src_path.rsplit('/', 1)[-1]
         mime_type = rstat['MimeType']
 
-    listener = MirrorLeechListener(message, tag=tag)
+    listener = MirrorLeechListener(message, tag=tag, source_url=link)
     await listener.onDownloadStart()
 
     RCTransfer = RcloneTransferHelper(listener, name)
@@ -88,7 +88,7 @@ async def rcloneNode(client, message, link, dst_path, rcf, tag):
     gid = ''.join(SystemRandom().choices(ascii_letters + digits, k=12))
     async with download_dict_lock:
         download_dict[message.id] = RcloneStatus(
-            RCTransfer, message, gid, 'cl')
+            RCTransfer, message, gid, 'cl', listener.upload_details)
     await sendStatusMessage(message)
     link, destination = await RCTransfer.clone(config_path, remote, src_path, dst_path, rcf, mime_type)
     if not link:
@@ -221,10 +221,10 @@ async def clone(client, message):
 
     error_msg = []
     error_button = None
-    task_utilis_msg, error_button = await task_utils(message)
-    if task_utilis_msg:
-        error_msg.extend(task_utilis_msg)
-
+    if not await isAdmin(message):
+        task_utilis_msg, error_button = await task_utils(message)
+        if task_utilis_msg:
+            error_msg.extend(task_utilis_msg)
     if error_msg:
         final_msg = f'Hey, <b>{tag}</b>!\n'
         for __i, __msg in enumerate(error_msg, 1):

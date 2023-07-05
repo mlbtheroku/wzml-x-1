@@ -41,20 +41,39 @@ async def gen_mediainfo(message, link=None, media=None, mmsg=None):
                 async for chunk in bot.stream_media(media, limit=5):
                     async with aiopen(des_path, "ab") as f:
                         await f.write(chunk)
-        stdout, stderr, _ = await cmd_exec(ssplit(f'mediainfo "{des_path}"'))
-        tele_content = f"<h4>{ospath.basename(des_path)}</h4><br><br>"
+        stdout, _, _ = await cmd_exec(ssplit(f'mediainfo "{des_path}"'))
+        tc = f"<h4>📌 {ospath.basename(des_path)}</h4><br><br>"
         if len(stdout) != 0:
-            tele_content += f"<br><br><pre>{stdout}</pre><br>"
-        if len(stderr) != 0:
-            tele_content += f"<br><br><pre>{stderr}</pre>"
+            tc += parseinfo(stdout)
     except Exception as e:
         LOGGER.error(e)
         await editMessage(temp_send, f"MediaInfo Stopped due to {str(e)}")
     finally:
         await aioremove(des_path)
-    link_id = (await telegraph.create_page(title='MediaInfo', content=tele_content))["path"]
-    await editMessage(temp_send, f"<b>MediaInfo:</b>\n\n<b>Link :</b> https://graph.org/{link_id}")
-    
+    link_id = (await telegraph.create_page(title='MediaInfo X', content=tc))["path"]
+    await temp_send.edit(f"<b>MediaInfo:</b>\n\n➲ <b>Link :</b> https://graph.org/{link_id}", disable_web_page_preview=False)
+
+
+section_dict = {'General': '🗒', 'Video': '🎞', 'Audio': '🔊', 'Text': '🔠', 'Menu': '🗃'}
+def parseinfo(out):
+    tc = ''
+    trigger = False
+    for line in out.split('\n'):
+        for section, emoji in section_dict.items():
+            if line.startswith(section):
+                trigger = True
+                if not line.startswith('General'):
+                    tc += '</pre><br>'
+                tc += f"<h4>{emoji} {line.replace('Text', 'Subtitle')}</h4>"
+                break
+        if trigger:
+            tc += '<br><pre>'
+            trigger = False
+        else:
+            tc += line + '\n'
+    tc += '</pre><br>'
+    return tc
+
 
 async def mediainfo(_, message):
     rply = message.reply_to_message

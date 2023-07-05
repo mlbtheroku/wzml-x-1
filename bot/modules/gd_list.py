@@ -5,7 +5,7 @@ from pyrogram.filters import command, regex
 
 from bot import LOGGER, bot, config_dict
 from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
-from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, delete_links, one_minute_del, five_minute_del
+from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, delete_links, one_minute_del, five_minute_del, isAdmin
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.button_build import ButtonMaker
@@ -70,12 +70,14 @@ async def drive_list(_, message):
         await one_minute_del(reply_message)
         return
     user_id = message.from_user.id
-    msg, btn = checking_access(user_id)
-    if msg is not None:
-        reply_message = await sendMessage(message, msg, btn.build_menu(1))
-        await delete_links(message)
-        await five_minute_del(reply_message)
-        return
+    if not await isAdmin(message, user_id):
+        if message.chat.type != message.chat.type.PRIVATE:
+            msg, btn = checking_access(user_id)
+            if msg is not None:
+                reply_message = await sendMessage(message, msg, btn.build_menu(1))
+                await delete_links(message)
+                await five_minute_del(reply_message)
+                return
     buttons = await list_buttons(user_id)
     reply_message = await sendMessage(message, 'Choose list options:', buttons)
     await delete_links(message)

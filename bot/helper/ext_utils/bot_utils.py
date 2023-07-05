@@ -107,7 +107,7 @@ async def get_user_tasks(user_id, maxtask):
 
 
 def bt_selection_buttons(id_):
-    gid = id_[:12] if len(id_) > 20 else id_
+    gid = id_[:8]
     pincode = ''.join([n for n in id_ if n.isdigit()][:4])
     buttons = ButtonMaker()
     BASE_URL = config_dict['BASE_URL']
@@ -115,8 +115,8 @@ def bt_selection_buttons(id_):
         buttons.ubutton("Select Files", f"{BASE_URL}/app/files/{id_}")
         buttons.ibutton("Pincode", f"btsel pin {gid} {pincode}")
     else:
-        buttons.ubutton(
-            "Select Files", f"{BASE_URL}/app/files/{id_}?pin_code={pincode}")
+        buttons.ubutton("Select Files", f"{BASE_URL}/app/files/{id_}?pin_code={pincode}")
+    buttons.ibutton("Cancel", f"btsel rm {gid} {id_}")
     buttons.ibutton("Done Selecting", f"btsel done {gid} {id_}")
     return buttons.build_menu(2)
 
@@ -316,31 +316,40 @@ def get_mega_link_type(url):
 def arg_parser(items, arg_base):
     if not items:
         return arg_base
+    bool_arg_set = {'-b', '-e', '-z', '-s', '-j', '-d'}
     t = len(items)
     i = 0
+    arg_start = -1
+
     while i + 1 <= t:
-        part = items[i]
+        part = items[i].strip()
         if part in arg_base:
-            if part in ['-s', '-j']:
+            if arg_start == -1:
+                arg_start = i
+            if i + 1 == t and part in bool_arg_set or part in ['-s', '-j']:
                 arg_base[part] = True
-            elif t == i + 1:
-                if part in ['-b', '-e', '-z', '-s', '-j', '-d']:
-                    arg_base[part] = True
             else:
                 sub_list = []
-                for j in range(i+1, t):
-                    item = items[j]
+                for j in range(i + 1, t):
+                    item = items[j].strip()
                     if item in arg_base:
-                        if part in ['-b', '-e', '-z', '-s', '-j', '-d']:
+                        if part in bool_arg_set and not sub_list:
                             arg_base[part] = True
                         break
-                    sub_list.append(item)
+                    sub_list.append(item.strip())
                     i += 1
                 if sub_list:
                     arg_base[part] = " ".join(sub_list)
         i += 1
-    if items[0] not in arg_base:
-        arg_base['link'] = items[0]
+
+    link = []
+    if items[0].strip() not in arg_base:
+        if arg_start == -1:
+            link.extend(item.strip() for item in items)
+        else:
+            link.extend(items[r].strip() for r in range(arg_start))
+        if link:
+            arg_base['link'] = " ".join(link)
     return arg_base
 
 
@@ -541,7 +550,7 @@ async def set_commands(client):
                 ),
                 BotCommand(f'{BotCommands.CancelMirror}', 'Cancel a Task'),
                 BotCommand(
-                    f'{BotCommands.CancelAllCommand}',
+                    f'{BotCommands.CancelAllCommand[0]}',
                     'Cancel all tasks which added by you to in bots.',
                 ),
                 BotCommand(f'{BotCommands.ListCommand}', 'Search in Drive'),
@@ -552,6 +561,9 @@ async def set_commands(client):
                     f'{BotCommands.UserSetCommand[0]}', 'Users settings'
                 ),
                 BotCommand(f'{BotCommands.HelpCommand}', 'Get detailed help'),
+                BotCommand(f'{BotCommands.BotSetCommand}', 'Open Bot settings'),
+                BotCommand(f'{BotCommands.LogCommand}', 'View log'),
+                BotCommand(f'{BotCommands.RestartCommand[0]}', 'Restart bot')
             ]
         )
 

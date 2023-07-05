@@ -17,12 +17,12 @@ class Async_Gofile:
         api_status = response["status"]
         if api_status == "ok":
             return response["data"]
-        else:
-            if "error-" in response["status"]:
-                error = response["status"].split("-")[1]
-            else:
-                error = "Response Status is not ok and reason is unknown"
-            raise Exception(error)
+        error = (
+            response["status"].split("-")[1]
+            if "error-" in response["status"]
+            else "Response Status is not ok and reason is unknown"
+        )
+        raise Exception(error)
 
     async def get_Server(self, pre_session=None):
         if pre_session:
@@ -45,13 +45,13 @@ class Async_Gofile:
             try:
                 get_account_resp = await session.get(url=f"{self.api_url}getAccountDetails?token={self.token}&allDetails=true")
                 get_account_resp = await get_account_resp.json()
-                if check_account is True:
-                    if get_account_resp["status"] == "ok":
-                        return True
-                    elif get_account_resp["status"] == "error-wrongToken":
-                        return False
-                    else:
-                        return await self._api_resp_handler(get_account_resp)
+                if check_account is True and get_account_resp["status"] == "ok":
+                    return True
+                elif (
+                    check_account is True
+                    and get_account_resp["status"] == "error-wrongToken"
+                ):
+                    return False
                 else:
                     return await self._api_resp_handler(get_account_resp)
             except Exception as e:
@@ -144,7 +144,7 @@ class Async_Gofile:
     async def set_option(self, contentId, option, value):
         if self.token is None:
             raise Exception()
-        if not option in ["public", "password", "description", "expire", "tags"]:
+        if option not in ["public", "password", "description", "expire", "tags"]:
             raise Exception(option)
         async with ClientSession() as session:
             try:

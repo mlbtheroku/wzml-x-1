@@ -89,7 +89,7 @@ class QbittorrentStatus:
         return self
 
     def gid(self):
-        return self.hash()[:12]
+        return self.hash()[:8]
 
     def hash(self):
         self.__update()

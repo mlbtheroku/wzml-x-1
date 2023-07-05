@@ -130,6 +130,26 @@ class DbManger:
         await self.__db.users.update_one({'_id': user_id}, {'$set': {key: doc_bin}}, upsert=True)
         self.__conn.close
 
+    async def get_pm_uids(self):
+        if self.__err:
+            return
+        return [doc['_id'] async for doc in self.__db.pm_users[bot_id].find({})]
+        self.__conn.close
+        
+    async def update_pm_users(self, user_id):
+        if self.__err:
+            return
+        if not bool(await self.__db.pm_users[bot_id].find_one({'_id': user_id})):
+            await self.__db.pm_users[bot_id].insert_one({'_id': user_id})
+            LOGGER.info(f'New PM User Added : {user_id}')
+        self.__conn.close
+        
+    async def rm_pm_user(self, user_id):
+        if self.__err:
+            return
+        await self.__db.pm_users[bot_id].delete_one({'_id': user_id})
+        self.__conn.close
+        
     async def rss_update_all(self):
         if self.__err:
             return

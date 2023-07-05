@@ -180,6 +180,28 @@ class GoogleDriveHelper:
             LOGGER.error(f"Delete Result: {err}")
             msg = str(err)
         return msg
+        
+    def driveclean(self, drive_id):
+        msg = ''
+        query = f"'{drive_id}' in parents and trashed = false"
+        page_token = None
+        while True:
+            try:
+                drive_query = self.__service.files().list(q=query, spaces='drive', fields='nextPageToken, files(id, name, size)', pageToken=page_token, includeItemsFromAllDrives=True, supportsAllDrives=True).execute()
+                files = drive_query.get('files', [])
+                for file in files:
+                    self.__total_files += 1
+                    self.__total_bytes += int(file.get('size', 0))
+                    self.__service.files().delete(fileId=file['id'], supportsAllDrives=True).execute()
+                page_token = drive_query.get('nextPageToken', None)
+                if page_token is None:
+                    msg = f"⌬ <b><i>Successfully Cleaned Folder/Drive :</i></b> \n\n<b>Total Files:</b> <code>{self.__total_files}</code>\n<b>Total Size:</b> <code>{get_readable_file_size(self.__total_bytes)}</code>"
+                    break
+            except Exception as err:
+                msg = str(err).replace('>', '').replace('<', '')
+                LOGGER.error(err)
+                break
+        return msg
 
     def upload(self, file_name, size):
         self.__is_uploading = True
@@ -259,7 +281,7 @@ class GoogleDriveHelper:
     @retry(wait=wait_exponential(multiplier=2, min=3, max=6), stop=stop_after_attempt(3),
            retry=retry_if_exception_type(Exception))
     def __create_directory(self, directory_name, dest_id):
-        directory_name = async_to_sync(format_filename, directory_name, self.__user_id, isMirror=True)
+        directory_name, _ = async_to_sync(format_filename, directory_name, self.__user_id, isMirror=True)
         file_metadata = {
             "name": directory_name,
             "description": 'Uploaded by Luna Mirror',
@@ -279,7 +301,7 @@ class GoogleDriveHelper:
     @retry(wait=wait_exponential(multiplier=2, min=3, max=6), stop=stop_after_attempt(3),
            retry=(retry_if_exception_type(Exception)))
     def __upload_file(self, file_path, file_name, mime_type, dest_id, is_dir=True):
-        file_name = async_to_sync(format_filename, file_name, self.__user_id, isMirror=True)
+        file_name, _ = async_to_sync(format_filename, file_name, self.__user_id, isMirror=True)
         # File body description
         file_metadata = {
             'name': file_name,
@@ -433,7 +455,7 @@ class GoogleDriveHelper:
     @retry(wait=wait_exponential(multiplier=2, min=3, max=6), stop=stop_after_attempt(3),
            retry=retry_if_exception_type(Exception))
     def __copyFile(self, file_id, dest_id, file_name):
-        file_name = async_to_sync(format_filename, file_name, self.__user_id, isMirror=True)
+        file_name, _ = async_to_sync(format_filename, file_name, self.__user_id, isMirror=True)
         body = {'name': file_name,
                 'parents': [dest_id]}
         try:

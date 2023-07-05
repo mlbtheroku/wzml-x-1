@@ -17,9 +17,9 @@ async def add_rclone_download(rc_path, config_path, path, name, listener):
     remote, rc_path = rc_path.split(':', 1)
     rc_path = rc_path.strip('/')
 
-    cmd1 = ['zcl', 'lsjson', '--fast-list', '--stat', '--no-mimetype',
+    cmd1 = ['rclone', 'lsjson', '--fast-list', '--stat', '--no-mimetype',
             '--no-modtime', '--config', config_path, f'{remote}:{rc_path}']
-    cmd2 = ['zcl', 'size', '--fast-list', '--json',
+    cmd2 = ['rclone', 'size', '--fast-list', '--json',
             '--config', config_path, f'{remote}:{rc_path}']
     res1, res2 = await gather(cmd_exec(cmd1), cmd_exec(cmd2))
     if res1[2] != res2[2] != 0:
@@ -28,8 +28,12 @@ async def add_rclone_download(rc_path, config_path, path, name, listener):
             msg = f'Error: While getting rclone stat/size. Path: {remote}:{rc_path}. Stderr: {err[:4000]}'
             await sendMessage(listener.message, msg)
         return
-    rstat = loads(res1[0])
-    rsize = loads(res2[0])
+    try:
+        rstat = loads(res1[0])
+        rsize = loads(res2[0])
+    except Exception as err:
+        await sendMessage(listener.message, f'RcloneDownload JsonLoad: {err}')
+        return
     if rstat['IsDir']:
         if not name:
             name = rc_path.rsplit('/', 1)[-1] if rc_path else remote
@@ -63,7 +67,7 @@ async def add_rclone_download(rc_path, config_path, path, name, listener):
     RCTransfer = RcloneTransferHelper(listener, name)
     async with download_dict_lock:
         download_dict[listener.uid] = RcloneStatus(
-            RCTransfer, listener.message, gid, 'dl')
+            RCTransfer, listener.message, gid, 'dl', listener.upload_details)
     async with queue_dict_lock:
         non_queued_dl.add(listener.uid)
 

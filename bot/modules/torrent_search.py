@@ -6,7 +6,7 @@ from html import escape
 from urllib.parse import quote
 
 from bot import bot, LOGGER, config_dict, get_client
-from bot.helper.telegram_helper.message_utils import editMessage, sendMessage, delete_links, one_minute_del, five_minute_del
+from bot.helper.telegram_helper.message_utils import editMessage, sendMessage, delete_links, one_minute_del, five_minute_del, isAdmin
 from bot.helper.ext_utils.telegraph_helper import telegraph
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
@@ -214,12 +214,14 @@ async def torrentSearch(_, message):
     buttons = ButtonMaker()
     key = message.text.split()
     SEARCH_PLUGINS = config_dict['SEARCH_PLUGINS']
-    msg, btn = checking_access(user_id)
-    if msg is not None:
-        reply_message = await sendMessage(message, msg, btn.build_menu(1))
-        await delete_links(message)
-        await five_minute_del(reply_message)
-        return
+    if not await isAdmin(message, user_id):
+        if message.chat.type != message.chat.type.PRIVATE:
+            msg, buttons = checking_access(user_id, buttons)
+            if msg is not None:
+                reply_message = await sendMessage(message, msg, buttons.build_menu(1))
+                await delete_links(message)
+                await five_minute_del(reply_message)
+                return
     if SITES is None and not SEARCH_PLUGINS:
         reply_message = await sendMessage(message, "No API link or search PLUGINS added for this function")
         await delete_links(message)

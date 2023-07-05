@@ -160,8 +160,7 @@ EXTENSION_FILTER = environ.get('EXTENSION_FILTER', '')
 if len(EXTENSION_FILTER) > 0:
     fx = EXTENSION_FILTER.split()
     for x in fx:
-        if x.strip().startswith('.'):
-            x = x.lstrip('.')
+        x = x.lstrip('.')
         GLOBAL_EXTENSION_FILTER.append(x.strip().lower())
 
 IS_PREMIUM_USER = False
@@ -241,7 +240,7 @@ else:
     LEECH_SPLIT_SIZE = int(LEECH_SPLIT_SIZE)
 
 BOT_MAX_TASKS = environ.get('BOT_MAX_TASKS', '')
-BOT_MAX_TASKS = '' if len(BOT_MAX_TASKS) == 0 else int(BOT_MAX_TASKS)
+BOT_MAX_TASKS = int(BOT_MAX_TASKS) if BOT_MAX_TASKS.isdigit() else ''
 
 STATUS_UPDATE_INTERVAL = environ.get('STATUS_UPDATE_INTERVAL', '')
 if len(STATUS_UPDATE_INTERVAL) == 0:

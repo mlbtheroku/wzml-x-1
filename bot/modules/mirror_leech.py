@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-from pyrogram.handlers import MessageHandler
-from pyrogram.filters import command
+from pyrogram.handlers import MessageHandler, CallbackQueryHandler
+from pyrogram.filters import command, regex
 from base64 import b64encode
 from re import match as re_match
 from asyncio import sleep
+from aiofiles import open as aiopen
 from aiofiles.os import path as aiopath
 
 from bot import bot, DOWNLOAD_DIR, LOGGER, config_dict
@@ -20,7 +21,7 @@ from bot.helper.mirror_utils.download_utils.direct_link_generator import direct_
 from bot.helper.mirror_utils.download_utils.telegram_download import TelegramDownloadHelper
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, get_tg_link_content, delete_links, deleteMessage, one_minute_del, five_minute_del
+from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, get_tg_link_content, delete_links, deleteMessage, one_minute_del, five_minute_del, isAdmin
 from bot.helper.listeners.tasks_listener import MirrorLeechListener
 from bot.helper.ext_utils.help_messages import MIRROR_HELP_MESSAGE
 from bot.helper.ext_utils.bulk_links import extract_bulk_links
@@ -178,10 +179,10 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
 
     error_msg = []
     error_button = None
-    task_utilis_msg, error_button = await task_utils(message)
-    if task_utilis_msg:
-        error_msg.extend(task_utilis_msg)
-
+    if not await isAdmin(message):
+        task_utilis_msg, error_button = await task_utils(message)
+        if task_utilis_msg:
+            error_msg.extend(task_utilis_msg)
     if error_msg:
         final_msg = f'Hey, <b>{tag}</b>!\n'
         for __i, __msg in enumerate(error_msg, 1):
@@ -285,7 +286,6 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             auth = ''
         await add_aria2c_download(link, path, listener, name, auth, ratio, seed_time)
     await delete_links(message)
-
 
 
 async def mirror(client, message):

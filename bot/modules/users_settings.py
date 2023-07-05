@@ -230,7 +230,7 @@ async def update_user_settings(query, key=None, edit_type=None, edit_mode=None, 
 async def user_settings(client, message):
     if len(message.command) > 1 and message.command[1] == '-s':
         set_arg = message.command[2].strip() if len(message.command) > 2 else None
-        msg = await sendMessage(message, '<i>Fetching Settings...</i>', photo='IMAGES')
+        msg = await sendMessage(message, '<i>Fetching Settings...</i>')
         if set_arg and (reply_to := message.reply_to_message):
             if message.from_user.id != reply_to.from_user.id:
                 return await editMessage(msg, '<i>Reply to Your Own Message for Setting via Args Directly</i>')
@@ -255,8 +255,7 @@ async def user_settings(client, message):
     /cmd -s ldump''')
     else:
         msg, button = await get_user_settings(message.from_user)
-        await sendMessage(message, msg, button, 'IMAGES')
-
+        await sendMessage(message, msg, button)
 
 async def set_yt_options(client, message, pre_event):
     user_id = message.from_user.id
@@ -634,6 +633,5 @@ async def send_users_settings(client, message):
 bot.add_handler(MessageHandler(send_users_settings, filters=command(
     BotCommands.UsersCommand) & CustomFilters.sudo))
 bot.add_handler(MessageHandler(user_settings, filters=command(
-    BotCommands.UserSetCommand)))
-bot.add_handler(CallbackQueryHandler(
-    edit_user_settings, filters=regex("^userset")))
+    BotCommands.UserSetCommand) & CustomFilters.authorized_uset))
+bot.add_handler(CallbackQueryHandler(edit_user_settings, filters=regex("^userset")))

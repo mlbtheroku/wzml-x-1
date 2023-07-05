@@ -8,6 +8,7 @@ from asyncio import create_subprocess_exec, gather
 from uuid import uuid4
 from base64 import b64decode
 from quoters import Quote
+from html import escape
 
 from requests import get as rget
 from pytz import timezone
@@ -22,7 +23,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from bot import bot, config_dict, user_data, botStartTime, LOGGER, Interval, DATABASE_URL, QbInterval, INCOMPLETE_TASK_NOTIFIER, scheduler
 from .helper.ext_utils.fs_utils import start_cleanup, clean_all, exit_clean_up
-from .helper.ext_utils.bot_utils import get_progress_bar_string, get_readable_file_size, get_readable_time, cmd_exec, sync_to_async, set_commands, update_user_ldata, new_thread, format_validity_time
+from .helper.ext_utils.bot_utils import get_progress_bar_string, get_readable_file_size, get_readable_time, cmd_exec, sync_to_async, set_commands, update_user_ldata, new_thread, format_validity_time, new_task
 from .helper.ext_utils.db_handler import DbManger
 from .helper.telegram_helper.bot_commands import BotCommands
 from .helper.telegram_helper.message_utils import sendMessage, editMessage, sendFile, deleteMessage, one_minute_del
@@ -30,8 +31,7 @@ from .helper.telegram_helper.filters import CustomFilters
 from .helper.telegram_helper.button_build import ButtonMaker
 from .helper.listeners.aria2_listener import start_aria2_listener
 from .helper.themes import BotTheme
-from .modules import authorize, clone, gd_count, gd_delete, gd_list, cancel_mirror, mirror_leech, status, torrent_search, torrent_select, ytdlp, \
-                     rss, shell, eval, users_settings, bot_settings, speedtest, save_msg, images, anilist, mediainfo, mydramalist, broadcast
+from .modules import authorize, clone, gd_count, gd_delete, gd_list, cancel_mirror, mirror_leech, status, torrent_search, torrent_select, ytdlp, rss, shell, eval, users_settings, bot_settings, speedtest, save_msg, images, anilist, mediainfo, mydramalist, broadcast, gen_pyro_sess, gd_clean
 
 @new_thread
 async def stats(_, message):
@@ -77,15 +77,9 @@ async def stats(_, message):
     await deleteMessage(message)
     await one_minute_del(reply_message)
 
+@new_thread
 async def start(client, message):
-    id_ = message.from_user.id
-    if message.chat.type == "private":
-        if 'users' not in db.list_collection_names():
-            db.create_collection('users')  
-    if id_ and id_ not in user_data or user_data[id_].get('is_bot_user'):
-        update_user_ldata(id_, 'is_bot_user', True)
-    if DATABASE_URL:
-        await DbManger().update_user_data(id_)
+    await DbManger().update_pm_users(message.from_user.id)
     buttons = ButtonMaker()
     reply_markup = buttons.build_menu(2)
     if len(message.command) > 1 and config_dict['TOKEN_TIMEOUT']:
@@ -139,16 +133,51 @@ async def restart(client, message):
     osexecl(executable, executable, "-m", "bot")
 
 
-async def ping(client, message):
+async def ping(_, message):
     start_time = int(round(time() * 1000))
     reply = await sendMessage(message, BotTheme('PING'))
     end_time = int(round(time() * 1000))
     await editMessage(reply, BotTheme('PING_VALUE', value=(end_time - start_time)))
 
 
-async def log(client, message):
-    await sendFile(message, 'log.txt')
+@new_task
+async def wzmlxcb(_, query):
+    message = query.message
+    user_id = query.from_user.id
+    data = query.data.split()
+    if user_id != int(data[1]):
+        return await query.answer(text="Not Message User!", show_alert=True)
+    if data[2] == "logdisplay":
+        await query.answer()
+        async with aiopen('log.txt', 'r') as f:
+            logFileLines = (await f.read()).splitlines()
+        def parseline(line):
+            try:
+                return "[" + line.split('] [', 1)[1]
+            except IndexError:
+                return line
+        ind, Loglines = 1, ''
+        try:
+            while len(Loglines) <= 3500:
+                Loglines = parseline(logFileLines[-ind]) + '\n' + Loglines
+                if ind == len(logFileLines): 
+                    break
+                ind += 1
+            startLine = f"<b>Showing Last {ind} Lines from log.txt:</b> \n\n----------<b>START LOG</b>----------\n\n"
+            endLine = "\n----------<b>END LOG</b>----------"
+            await sendMessage(message, startLine + escape(Loglines) + endLine)
+            await query.edit_message_reply_markup(None)
+        except Exception as err:
+            LOGGER.error(f"TG Log Display : {str(err)}")
+    else: # More Whole Bot CB Usage !!
+        await query.answer()
+        await message.delete()
+    
 
+async def log(_, message):
+    buttons = ButtonMaker()
+    buttons.ibutton('Log Display', f'wzmlx {message.from_user.id} logdisplay')
+    await sendFile(message, 'log.txt', buttons=buttons.build_menu(1))
 
 async def search_images():
     if not config_dict['IMG_SEARCH']:
@@ -274,6 +303,7 @@ async def main():
         BotCommands.HelpCommand) & CustomFilters.authorized))
     bot.add_handler(MessageHandler(stats, filters=command(
         BotCommands.StatsCommand) & CustomFilters.authorized))
+    bot.add_handler(CallbackQueryHandler(wzmlxcb, filters=regex(r'^wzmlx')))
     LOGGER.info("Bot Started!")
     signal(SIGINT, exit_clean_up)
 
