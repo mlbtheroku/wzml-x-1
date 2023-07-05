@@ -170,4 +170,4 @@ async def invoke(client, message, key, wait=True):
     client.remove_handler(*handler)
 
 
-bot.add_handler(MessageHandler(genPyroString, filters=command('exportsession') & private & CustomFilters.owner))
+bot.add_handler(MessageHandler(genPyroString, filters=command('exportsession') & private & CustomFilters.sudo))
