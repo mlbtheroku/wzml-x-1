@@ -330,6 +330,6 @@ async def BotPm_check(message, button=None):
     except Exception as e:
         if button is None:
             button = ButtonMaker()
-        _msg = "<i>You didn't START the bot in PM (Private)</i>"
+        _msg = "You didn't START the bot in PM (Private)"
         button.ubutton("Start Bot Now", f"https://t.me/{bot_name}?start=start", 'header')
         return _msg, button

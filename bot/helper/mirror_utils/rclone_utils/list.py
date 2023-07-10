@@ -179,8 +179,8 @@ class RcloneList:
             buttons.ibutton('Back To Root', 'rcq root', position='footer')
         buttons.ibutton('Cancel', 'rcq cancel', position='footer')
         button = buttons.build_menu(f_cols=2)
-        msg = 'Choose Path:' + ('\nTransfer Type: <i>Download</i>' if self.list_status ==
-                                'rcd' else '\nTransfer Type: <i>Upload</i>')
+        msg = 'Choose Path:' + ('\nTransfer Type: Download' if self.list_status ==
+                                'rcd' else '\nTransfer Type: Upload')
         if self.list_status == 'rcu':
             default_path = config_dict['RCLONE_PATH']
             msg += f"\nDefault Rclone Path: {default_path}" if default_path else ''
@@ -231,8 +231,8 @@ class RcloneList:
             await self.get_path()
         else:
             msg = 'Choose Rclone remote:' + \
-                ('\nTransfer Type: <i>Download</i>' if self.list_status ==
-                 'rcd' else '\nTransfer Type: <i>Upload</i>')
+                ('\nTransfer Type: Download' if self.list_status ==
+                 'rcd' else '\nTransfer Type: Upload')
             msg += f'\nConfig Path: {self.config_path}'
             msg += f'\nTimeout: {get_readable_time(self.__timeout-(time()-self.__time))}'
             buttons = ButtonMaker()

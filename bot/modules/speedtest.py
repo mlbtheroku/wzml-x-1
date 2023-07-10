@@ -11,7 +11,7 @@ from bot.helper.ext_utils.bot_utils import get_readable_file_size, new_task
 
 @new_task
 async def speedtest(_, message):
-    speed = await sendMessage(message, "<i>Initializing Speedtest...</i>")
+    speed = await sendMessage(message, "Initializing Speedtest...")
     test = Speedtest()
     test.get_best_server()
     test.download()
@@ -20,7 +20,7 @@ async def speedtest(_, message):
     result = test.results.dict()
     path = result['share']
     string_speed = f'''
-<b><i>SPEEDTEST INFO</i></b>
+<b>SPEEDTEST INFO</b>
 <b>• Upload:</b> <code>{get_readable_file_size(result['upload'] / 8)}/s</code>
 <b>• Download:</b>  <code>{get_readable_file_size(result['download'] / 8)}/s</code>
 <b>• Ping:</b> <code>{result['ping']} ms</code>
@@ -28,7 +28,7 @@ async def speedtest(_, message):
 <b>• Data Sent:</b> <code>{get_readable_file_size(int(result['bytes_sent']))}</code>
 <b>• Data Received:</b> <code>{get_readable_file_size(int(result['bytes_received']))}</code>
 
-<b><i>SPEEDTEST SERVER</i></b>
+<b>SPEEDTEST SERVER</b>
 <b>• Name:</b> <code>{result['server']['name']}</code>
 <b>• Country:</b> <code>{result['server']['country']}, {result['server']['cc']}</code>
 <b>• Sponsor:</b> <code>{result['server']['sponsor']}</code>
@@ -36,7 +36,7 @@ async def speedtest(_, message):
 <b>• Latitude:</b> <code>{result['server']['lat']}</code>
 <b>• Longitude:</b> <code>{result['server']['lon']}</code>
 
-<b><i>CLIENT DETAILS</i></b>
+<b>CLIENT DETAILS</b>
 <b>• IP Address:</b> <code>{result['client']['ip']}</code>
 <b>• Latitude:</b> <code>{result['client']['lat']}</code>
 <b>• Longitude:</b> <code>{result['client']['lon']}</code>

@@ -25,7 +25,7 @@ async def driveclean(_, message):
     buttons = ButtonMaker()
     buttons.ibutton('Yes, Sure', f'gdclean clear {gdriveid}')
     buttons.ibutton('No, Never', 'gdclean stop')
-    reply_message = await sendMessage(message, f"⌬ <b><i>GDrive Clean :</i></b>\n\n<code>Are you fully sure to delete all your data from folder ( {gdriveid} ) ?</code>\n\n<b>NOTE:</b>\n<i>1) All files are permanently deleted, not moved to trash.\n2) Folder doesn't gets Deleted.\n3) Delete files of custom folder via giving Gdrive_Id along with cmd, but it should have delete permissions.</i>", buttons.build_menu(2))
+    reply_message = await sendMessage(message, f"⌬ <b>GDrive Clean :</b>\n\n<code>Are you fully sure to delete all your data from folder ( {gdriveid} ) ?</code>\n\n<b>NOTE:</b>\n1) All files are permanently deleted, not moved to trash.\n2) Folder doesn't gets Deleted.\n3) Delete files of custom folder via giving Gdrive_Id along with cmd, but it should have delete permissions.", buttons.build_menu(2))
 
 @new_task
 async def drivecleancb(_, query):
@@ -37,7 +37,7 @@ async def drivecleancb(_, query):
         return
     if data[1] == "clear":
         await query.answer()
-        await editMessage(message, '<i>Processing Drive Clean...</i>')
+        await editMessage(message, 'Processing Drive Clean...')
         drive = GoogleDriveHelper()
         msg = await sync_to_async(drive.driveclean, data[2])
         await editMessage(message, msg)

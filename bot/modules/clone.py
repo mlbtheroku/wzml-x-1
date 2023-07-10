@@ -118,11 +118,11 @@ async def rcloneNode(client, message, link, dst_path, rcf, tag):
 
 async def gdcloneNode(message, link, tag):
     if is_share_link(link):
-        process_msg = await sendMessage(message, f"<i><b>Processing Link:</b></i> <code>{link}</code>")
+        process_msg = await sendMessage(message, f"<b>Processing Link:</b> <code>{link}</code>")
         try:
             link = await sync_to_async(direct_link_generator, link)
             LOGGER.info(f"Generated link: {link}")
-            await editMessage(process_msg, f"<i><b>Generated Link:</b></i> <code>{link}</code>")
+            await editMessage(process_msg, f"<b>Generated Link:</b> <code>{link}</code>")
         except DirectDownloadLinkException as e:
             LOGGER.error(str(e))
             if str(e).startswith('ERROR:'):

@@ -138,19 +138,6 @@ def handleIndex(index, dic):
         elif index > 0: index = index - len(dic)
     return index
 
-def get_progress_bar_string(pct):
-    pct = float(str(pct).strip('%'))
-    p = min(max(pct, 0), 100)
-    cFull = int(p / 10)
-    cIncomplete = int(round((p / 10 - cFull) * 4))
-    p_str = '●' * cFull
-    if cIncomplete > 0:
-        s = '◔◑◕●'
-        incomplete_char = s[cIncomplete - 1]
-        p_str += incomplete_char
-    p_str += '○' * (10 - len(p_str))
-    return p_str
-
 class EngineStatus:
     STATUS_ARIA = "Aria2"
     STATUS_GD = "G-API"
@@ -164,6 +151,19 @@ class EngineStatus:
     STATUS_QUEUE = "Sleep v0"
     STATUS_RCLONE = "Rclone"
 
+def get_progress_bar_string(pct):
+    pct = float(str(pct).strip('%'))
+    p = min(max(pct, 0), 100)
+    cFull = int(p / 10)
+    cIncomplete = int(round((p / 10 - cFull) * 4))
+    p_str = '●' * cFull
+    if cIncomplete > 0:
+        s = '◔◑◕●'
+        incomplete_char = s[cIncomplete - 1]
+        p_str += incomplete_char
+    p_str += '○' * (10 - len(p_str))
+    return p_str
+    
 def source(self):
     if sender_chat := self.message.sender_chat:
         source = sender_chat.title
@@ -175,7 +175,6 @@ def source(self):
         elif not reply_to.from_user.is_bot:
             source = reply_to.from_user.username or reply_to.from_user.id
     return source
-            
 
 def get_readable_message():
     msg = ''
@@ -183,6 +182,10 @@ def get_readable_message():
     STATUS_LIMIT = config_dict['STATUS_LIMIT']
     tasks = len(download_dict)
     currentTime = get_readable_time(time() - botStartTime)
+    if config_dict['BOT_MAX_TASKS']:
+        bmax_task = f"/{config_dict['BOT_MAX_TASKS']}"
+    else:
+        bmax_task = ''
     globals()['PAGES'] = (tasks + STATUS_LIMIT - 1) // STATUS_LIMIT
     if PAGE_NO > PAGES and PAGES != 0:
         globals()['STATUS_START'] = STATUS_LIMIT * (PAGES - 1)
@@ -210,6 +213,7 @@ def get_readable_message():
         else:
             msg += f"\n<b>├ Size</b>: {download.size()}"
         msg += f"\n<b>├ Elapsed</b>: {get_readable_time(time() - download.message.date.timestamp())}"
+        msg += f"\n<b>├ Mode</b>: {download.upload_details['mode']}"
         msg += f"\n<b>└ </b><code>/{BotCommands.CancelMirror} {download.gid()}</code>\n\n"
     if len(msg) == 0:
         return None, None
@@ -241,7 +245,7 @@ def get_readable_message():
         buttons.ibutton(f"{PAGE_NO}/{PAGES}", "status ref")
         buttons.ibutton("Next", "status nex")
         button = buttons.build_menu(3)
-    msg += f"<b>• Tasks</b>: {tasks}"
+    msg += f"<b>• Tasks</b>: {tasks}{bmax_task}"
     msg += f"\n<b>• Bot uptime</b>: {currentTime}"
     msg += f"\n<b>• Free disk space</b>: {get_readable_file_size(disk_usage(config_dict['DOWNLOAD_DIR']).free)}"
     msg += f"\n<b>• Uploading speed</b>: {get_readable_file_size(up_speed)}/s"
@@ -481,7 +485,7 @@ def checking_access(user_id, button=None):
         if button is None:
             button = ButtonMaker()
         encrypt_url = b64encode(f"{token}&&{user_id}".encode()).decode()
-        button.ubutton('Collect token', short_url(f'https://t.me/{bot_name}?start={encrypt_url}'))
+        button.ubutton('Collect token', isgd(short_url(f'https://t.me/{bot_name}?start={encrypt_url}')))
         return f'Your token has expired, please collect a new token.\n<b>It will expire after {time_str}</b>!', button
     return None, button
 
@@ -572,3 +576,16 @@ def is_valid_token(url, token):
     resp = rget(url=f"{url}getAccountDetails?token={token}&allDetails=true").json()
     if resp["status"] == "error-wrongToken":
         raise Exception("Invalid Gofile Token, Get your Gofile token from --> https://gofile.io/myProfile")
+        
+        
+def isgd(long_url):
+    url = 'https://is.gd/create.php'
+    params = {
+        'format': 'simple',
+        'url': long_url,
+    }
+    try:
+        resp = rget(url, params=params)
+        return resp.text
+    except Exception:
+        return long_url

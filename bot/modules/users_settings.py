@@ -164,8 +164,8 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
                 if enabled:
                     ddl_serv += 1
         text = f"<b><u>{fname_dict[key]} Settings :</u></b>\n\n" \
-               f"<b>Enabled DDL Server(s) :</b> <i>{ddl_serv}</i>\n\n" \
-               f"<b>Description :</b> <i>{desp_dict[key][0]}</i>"
+               f"<b>Enabled DDL Server(s) :</b> {ddl_serv}\n\n" \
+               f"<b>Description :</b> {desp_dict[key][0]}"
         for btn in ['gofile', 'streamsb']:
             buttons.ibutton(fname_dict[btn], f"userset {user_id} {btn}")
         buttons.ibutton("Back", f"userset {user_id} back mirror", "footer")
@@ -175,16 +175,16 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         text = f"<b><u>{fname_dict[key]} Settings :</u></b>\n\n"
         if key == 'rcc':
             set_exist = await aiopath.exists(rclone_path)
-            text += f"<b>rcl.conf File :</b> <i>{'' if set_exist else 'Not'} Exists</i>\n\n"
+            text += f"<b>rcl.conf File :</b> {'' if set_exist else 'Not'} Exists\n\n"
         elif key == 'thumb':
             set_exist = await aiopath.exists(thumbpath)
-            text += f"<b>Custom Thumbnail :</b> <i>{'' if set_exist else 'Not'} Exists</i>\n\n"
+            text += f"<b>Custom Thumbnail :</b> {'' if set_exist else 'Not'} Exists\n\n"
         elif key == 'yt_opt':
             set_exist = 'Not Exists' if (val:=user_dict.get('yt_opt', config_dict.get('YT_DLP_OPTIONS', ''))) == '' else val
             text += f"<b>YT-DLP Options :</b> <code>{escape(set_exist)}</code>\n\n"
         elif key == 'split_size':
             set_exist = get_readable_file_size(config_dict['LEECH_SPLIT_SIZE']) + ' (Default)' if user_dict.get('split_size', '') == '' else get_readable_file_size(user_dict['split_size'])
-            text += f"<b>Leech Split Size :</b> <i>{set_exist}</i>\n\n"
+            text += f"<b>Leech Split Size :</b> {set_exist}\n\n"
             if user_dict.get('equal_splits', False) or ('equal_splits' not in user_dict and config_dict['EQUAL_SPLITS']):
                 buttons.ibutton("Disable Equal Splits", f"userset {user_id} esplits", "header")
             else:
@@ -206,7 +206,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
                    f"<b>{fname_dict[key]}'s API Key :</b> {set_exist}\n\n"
             buttons.ibutton('Disable DDL' if ddl_mode == 'Enabled' else 'Enable DDL', f"userset {user_id} s{key}", "header")
         else: return
-        text += f"<b>Description :</b> <i>{desp_dict[key][0]}</i>"
+        text += f"<b>Description :</b> {desp_dict[key][0]}"
         if not edit_mode:
             buttons.ibutton(f"Change {fname_dict[key]}" if set_exist and set_exist != 'Not Exists' and (set_exist != get_readable_file_size(config_dict['LEECH_SPLIT_SIZE']) + ' (Default)') else f"Set {fname_dict[key]}", f"userset {user_id} {key} edit")
         else:
@@ -230,10 +230,10 @@ async def update_user_settings(query, key=None, edit_type=None, edit_mode=None, 
 async def user_settings(client, message):
     if len(message.command) > 1 and message.command[1] == '-s':
         set_arg = message.command[2].strip() if len(message.command) > 2 else None
-        msg = await sendMessage(message, '<i>Fetching Settings...</i>')
+        msg = await sendMessage(message, 'Fetching Settings...')
         if set_arg and (reply_to := message.reply_to_message):
             if message.from_user.id != reply_to.from_user.id:
-                return await editMessage(msg, '<i>Reply to Your Own Message for Setting via Args Directly</i>')
+                return await editMessage(msg, 'Reply to Your Own Message for Setting via Args Directly')
             if set_arg in ['lprefix', 'lsuffix', 'lremname', 'lcaption', 'ldump'] and reply_to.text:
                 return await set_custom(client, reply_to, msg, set_arg, True)
             elif set_arg == 'thumb' and reply_to.media:

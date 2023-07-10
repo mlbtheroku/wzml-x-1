@@ -76,15 +76,15 @@ async def __search(key, site, message, method):
                 async with c.get(api) as res:
                     search_results = await res.json()
             if 'error' in search_results or search_results['total'] == 0:
-                await editMessage(message, f"No result found for <i>{key}</i>\nTorrent Site:- <i>{SITES.get(site)}</i>")
+                await editMessage(message, f"No result found for {key}\nTorrent Site:- {SITES.get(site)}")
                 return
             msg = f"<b>Found {min(search_results['total'], TELEGRAPH_LIMIT)}</b>"
             if method == 'apitrend':
-                msg += f" <b>trending result(s)\nTorrent Site:- <i>{SITES.get(site)}</i></b>"
+                msg += f" <b>trending result(s)\nTorrent Site:- {SITES.get(site)}</b>"
             elif method == 'apirecent':
-                msg += f" <b>recent result(s)\nTorrent Site:- <i>{SITES.get(site)}</i></b>"
+                msg += f" <b>recent result(s)\nTorrent Site:- {SITES.get(site)}</b>"
             else:
-                msg += f" <b>result(s) for <i>{key}</i>\nTorrent Site:- <i>{SITES.get(site)}</i></b>"
+                msg += f" <b>result(s) for {key}\nTorrent Site:- {SITES.get(site)}</b>"
             search_results = search_results['data']
         except Exception as e:
             await editMessage(message, str(e))
@@ -103,10 +103,10 @@ async def __search(key, site, message, method):
         search_results = dict_search_results.results
         total_results = dict_search_results.total
         if total_results == 0:
-            await editMessage(message, f"No result found for <i>{key}</i>\nTorrent Site:- <i>{site.capitalize()}</i>")
+            await editMessage(message, f"No result found for {key}\nTorrent Site:- {site.capitalize()}")
             return
         msg = f"<b>Found {min(total_results, TELEGRAPH_LIMIT)}</b>"
-        msg += f" <b>result(s) for <i>{key}</i>\nTorrent Site:- <i>{site.capitalize()}</i></b>"
+        msg += f" <b>result(s) for {key}\nTorrent Site:- {site.capitalize()}</b>"
         await sync_to_async(client.search_delete, search_id=search_id)
         await sync_to_async(client.auth_log_out)
     link = await __getResult(search_results, key, message, method)
@@ -285,11 +285,11 @@ async def torrentSearchUpdate(_, query):
                     endpoint = 'Recent'
                 elif method == 'apitrend':
                     endpoint = 'Trending'
-                await editMessage(message, f"<b>Listing {endpoint} Items...\nTorrent Site:- <i>{SITES.get(site)}</i></b>")
+                await editMessage(message, f"<b>Listing {endpoint} Items...\nTorrent Site:- {SITES.get(site)}</b>")
             else:
-                await editMessage(message, f"<b>Searching for <i>{key}</i>\nTorrent Site:- <i>{SITES.get(site)}</i></b>")
+                await editMessage(message, f"<b>Searching for {key}\nTorrent Site:- {SITES.get(site)}</b>")
         else:
-            await editMessage(message, f"<b>Searching for <i>{key}</i>\nTorrent Site:- <i>{site.capitalize()}</i></b>")
+            await editMessage(message, f"<b>Searching for {key}\nTorrent Site:- {site.capitalize()}</b>")
         await __search(key, site, message, method)
     else:
         await query.answer()

@@ -2,8 +2,8 @@
 class style:
     ST_MSG = '''This bot can mirror all your links|files|torrents to Google Drive or any rclone cloud or to telegram or to ddl servers.
 <b>Type {help_command} to get a list of available commands</b>'''
-    ST_BOTPM = '''<i>Now, This bot will send all your files and links here. Start Using ...</i>'''
-    ST_UNAUTH = '''<i>You Are not authorized user!</i>'''
+    ST_BOTPM = '''Now, This bot will send all your files and links here. Start Using ...'''
+    ST_UNAUTH = '''You Are not authorized user!'''
     # ---------------------
 
     # async def restart(client, message): ---> __main__.py
@@ -95,20 +95,20 @@ class style:
 
     MIRROR = '''<b>Mirror Settings for {NAME}<</b>
 
-<b>• RClone Config :</b> <i>{RCLONE}</i>
+<b>• RClone Config :</b> {RCLONE}
 <b>• Mirror Prefix :</b> <code>{MPREFIX}</code>
 <b>• Mirror Suffix :</b> <code>{MSUFFIX}</code>
 <b>• Mirror Remname :</b> <code>{MREMNAME}</code>
-<b>• DDL Server(s) :</b> <i>{DDL_SERVER}</i>
+<b>• DDL Server(s) :</b> {DDL_SERVER}
 <b>• Daily Mirror :</b> <code>{DM}</code> per day'''
 
     LEECH = '''<b>Leech Settings for {NAME}</b>
 
-<b>• Leech Type :</b> <i>{LTYPE}</i>
-<b>• Custom Thumbnail :</b> <i>{THUMB}</i>
+<b>• Leech Type :</b> {LTYPE}
+<b>• Custom Thumbnail :</b> {THUMB}
 <b>• Leech Split Size :</b> <code>{SPLIT_SIZE}</code>
-<b>• Equal Splits :</b> <i>{EQUAL_SPLIT}</i>
-<b>• Media Group :</b> <i>{MEDIA_GROUP}</i>
+<b>• Equal Splits :</b> {EQUAL_SPLIT}
+<b>• Media Group :</b> {MEDIA_GROUP}
 <b>• Leech Caption :</b> <code>{LCAPTION}</code>
 <b>• Leech Prefix :</b> <code>{LPREFIX}</code>
 <b>• Leech Suffix :</b> <code>{LSUFFIX}</code>

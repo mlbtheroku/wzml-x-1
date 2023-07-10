@@ -20,21 +20,21 @@ MDL_API = "http://kuryana.vercel.app/" #Public API ! Do Not Abuse !
 
 async def mydramalist_search(_, message):
     if ' ' in message.text:
-        temp = await sendMessage(message, '<i>Searching in MyDramaList ...</i>')
+        temp = await sendMessage(message, 'Searching in MyDramaList ...')
         title = message.text.split(' ', 1)[1]
         user_id = message.from_user.id
         buttons = ButtonMaker()
         async with ClientSession() as sess:
             async with sess.get(f'{MDL_API}/search/q/{q(title)}') as resp:
                 if resp.status != 200:
-                    return await editMessage(temp, "<i>No Results Found</i>, Try Again or Use <b>MyDramaList Link</b>")
+                    return await editMessage(temp, "No Results Found, Try Again or Use <b>MyDramaList Link</b>")
                 mdl = await resp.json()
         for drama in mdl['results']['dramas']:
             buttons.ibutton(f"🎬 {drama.get('title')} ({drama.get('year')})", f"mdl {user_id} drama {drama.get('slug')}")
         buttons.ibutton("🚫 Close 🚫", f"mdl {user_id} close")
-        await editMessage(temp, '<b><i>Dramas found on MyDramaList :</i></b>', buttons.build_menu(1))
+        await editMessage(temp, '<b>Dramas found on MyDramaList :</b>', buttons.build_menu(1))
     else:
-        await sendMessage(message, f'<i>Send Movie / TV Series Name along with /{BotCommands.MyDramaListCommand} Command</i>')
+        await sendMessage(message, f'Send Movie / TV Series Name along with /{BotCommands.MyDramaListCommand} Command')
 
 
 async def extract_MDL(slug):
@@ -137,7 +137,7 @@ async def mdl_callback(_, query):
         if mdl and template != "":
             cap = template.format(**mdl)
         else:
-            cap = "<i>No Data Received</i>"
+            cap = "No Data Received"
         if mdl.get('poster'):
             try: #Invoke Raw Functions
                 await message.reply_to_message.reply_photo(mdl["poster"], caption=cap, reply_markup=buttons.build_menu(1))

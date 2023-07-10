@@ -17,7 +17,7 @@ from bot.helper.telegram_helper.button_build import ButtonMaker
 @new_task
 async def picture_add(_, message):
     resm = message.reply_to_message
-    editable = await sendMessage(message, "<i>Fetching Input ...</i>")
+    editable = await sendMessage(message, "Fetching Input ...")
     if len(message.command) > 1 or resm and resm.text:
         msg_text = resm.text if resm else message.command[1]
         if not msg_text.startswith("http"):
@@ -26,7 +26,7 @@ async def picture_add(_, message):
         await editMessage(editable, f"<b>Adding your Link :</b> <code>{pic_add}</code>")
     elif resm and resm.photo:
         if resm.photo.file_size > 5242880 * 2:
-            return await editMessage(editable, "<i>Media is Not Supported! Only Photos!!</i>")
+            return await editMessage(editable, "Media is Not Supported! Only Photos!!")
         try:
             photo_dir = await resm.download()
             await editMessage(editable, "<b>Now, Uploading to <code>graph.org</code>, Please Wait...</b>")
@@ -48,14 +48,14 @@ async def picture_add(_, message):
     if DATABASE_URL:
         await DbManger().update_config({'IMAGES': config_dict['IMAGES']})
     await asleep(1.5)
-    await editMessage(editable, f"<b><i>Successfully Added to Images List!</i></b>\n\n<b>• Total Images : {len(config_dict['IMAGES'])}</b>")
+    await editMessage(editable, f"<b>Successfully Added to Images List!</b>\n\n<b>• Total Images : {len(config_dict['IMAGES'])}</b>")
 
 
 async def pictures(_, message):
     if not config_dict['IMAGES']:
         await sendMessage(message, f"<b>No Photo to Show !</b> Add by /{BotCommands.AddImageCommand}")
     else:
-        to_edit = await sendMessage(message, "<i>Generating Grid of your Images...</i>")
+        to_edit = await sendMessage(message, "Generating Grid of your Images...")
         buttons = ButtonMaker()
         user_id = message.from_user.id
         buttons.ibutton("<<", f"images {user_id} turn -1")

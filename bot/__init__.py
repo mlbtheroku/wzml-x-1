@@ -436,13 +436,13 @@ if len(ANIME_TEMPLATE) == 0:
 <b>Hashtag</b>: {hashtag}
 <b>Studios</b>: {studios}
 
-<b>Description</b>: <i>{description}</i>'''
+<b>Description</b>: {description}'''
 
 MDL_TEMPLATE = environ.get('MDL_TEMPLATE', '')
 if len(MDL_TEMPLATE) == 0:
     MDL_TEMPLATE = '''<b>Title:</b> {title}
 <b>Also Known As:</b> {aka}
-<b>Rating ⭐️:</b> <i>{rating}</i>
+<b>Rating ⭐️:</b> {rating}
 <b>Release Info:</b> {aired_date}
 <b>Genre:</b> {genres}
 <b>MyDramaList URL:</b> {url}

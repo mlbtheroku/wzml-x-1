@@ -199,7 +199,6 @@ async def format_filename(file_, user_id, dirpath=None, isMirror=False):
     lcaption = config_dict['LEECH_FILENAME_CAPTION'] if (val:=user_dict.get('lcaption', '')) == '' else val
  
     prefile_ = file_
-    # SD-Style V2 ~ WZML-X
     if file_.startswith('www'): #Remove all www.xyz.xyz domains
         file_ = ' '.join(file_.split()[1:])
         
@@ -274,7 +273,7 @@ async def get_mediainfo_link(up_path):
     tc = f"<h4>{ospath.basename(up_path)}</h4><br><br>"
     if len(stdout) != 0:
         tc += parseinfo(stdout)
-    link_id = (await telegraph.create_page(title="MediaInfo X", content=tc))["path"]
+    link_id = (await telegraph.create_page(title="MediaInfo", content=tc))["path"]
     return f"https://graph.org/{link_id}"
 
 

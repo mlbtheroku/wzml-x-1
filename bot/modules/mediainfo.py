@@ -18,7 +18,7 @@ from bot.helper.ext_utils.telegraph_helper import telegraph
 
 
 async def gen_mediainfo(message, link=None, media=None, mmsg=None):
-    temp_send = await sendMessage(message, '<i>Generating MediaInfo...</i>')
+    temp_send = await sendMessage(message, 'Generating MediaInfo...')
     try:
         path = "Mediainfo/"
         if not await aiopath.isdir(path):
@@ -42,7 +42,7 @@ async def gen_mediainfo(message, link=None, media=None, mmsg=None):
                     async with aiopen(des_path, "ab") as f:
                         await f.write(chunk)
         stdout, _, _ = await cmd_exec(ssplit(f'mediainfo "{des_path}"'))
-        tc = f"<h4>📌 {ospath.basename(des_path)}</h4><br><br>"
+        tc = f"<h4>{ospath.basename(des_path)}</h4><br><br>"
         if len(stdout) != 0:
             tc += parseinfo(stdout)
     except Exception as e:
@@ -50,8 +50,8 @@ async def gen_mediainfo(message, link=None, media=None, mmsg=None):
         await editMessage(temp_send, f"MediaInfo Stopped due to {str(e)}")
     finally:
         await aioremove(des_path)
-    link_id = (await telegraph.create_page(title='MediaInfo X', content=tc))["path"]
-    await temp_send.edit(f"<b>MediaInfo:</b>\n\n➲ <b>Link :</b> https://graph.org/{link_id}", disable_web_page_preview=False)
+    link_id = (await telegraph.create_page(title='MediaInfo', content=tc))["path"]
+    await temp_send.edit(f"<b>MediaInfo:</b>\n\n<b>Link :</b> https://graph.org/{link_id}", disable_web_page_preview=True)
 
 
 section_dict = {'General': '🗒', 'Video': '🎞', 'Audio': '🔊', 'Text': '🔠', 'Menu': '🗃'}
@@ -64,7 +64,7 @@ def parseinfo(out):
                 trigger = True
                 if not line.startswith('General'):
                     tc += '</pre><br>'
-                tc += f"<h4>{emoji} {line.replace('Text', 'Subtitle')}</h4>"
+                tc += f"<h4>{line.replace('Text', 'Subtitle')}</h4>"
                 break
         if trigger:
             tc += '<br><pre>'
