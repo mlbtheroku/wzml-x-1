@@ -819,4 +819,4 @@ class GoogleDriveHelper:
             await self.__listener.onUploadError('your clone has been stopped and cloned data has been deleted!')
         elif self.__is_uploading:
             LOGGER.info(f"Cancelling Upload: {self.name}")
-            await self.__listener.onUploadError('your upload has been stopped and uploaded data has been deleted!')
+            await self.__listener.onUploadError('Cancelled by user!')

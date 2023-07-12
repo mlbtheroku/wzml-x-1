@@ -8,6 +8,8 @@ data*
 .netrc
 log.txt
 accounts/*
+MediaInfo/*
+Images/*
 Thumbnails/*
 tanha/*
 list_drives.txt

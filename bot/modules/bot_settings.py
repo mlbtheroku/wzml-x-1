@@ -136,6 +136,9 @@ async def load_config():
     if CAP_FONT.strip() not in ['', 'b', 'i', 'u', 's', 'spoiler', 'code']:
         CAP_FONT = 'code'
         
+    LINKS_LOG_ID = environ.get('LINKS_LOG_ID', '')
+    LINKS_LOG_ID = '' if len(LINKS_LOG_ID) == 0 else int(LINKS_LOG_ID)
+    
     LEECH_FILENAME_PREFIX = environ.get('LEECH_FILENAME_PREFIX', '')
     if len(LEECH_FILENAME_PREFIX) == 0:
         LEECH_FILENAME_PREFIX = ''
@@ -196,7 +199,8 @@ async def load_config():
     SEARCH_LIMIT = 0 if len(SEARCH_LIMIT) == 0 else int(SEARCH_LIMIT)
 
     LEECH_LOG_ID = environ.get('LEECH_LOG_ID', '')
-    LEECH_LOG_ID = '' if len(LEECH_LOG_ID) == 0 else int(LEECH_LOG_ID)
+    if len(LEECH_LOG_ID) == 0: 
+        LEECH_LOG_ID = ''
 
     STATUS_LIMIT = environ.get('STATUS_LIMIT', '')
     STATUS_LIMIT = 10 if len(STATUS_LIMIT) == 0 else int(STATUS_LIMIT)
@@ -505,6 +509,7 @@ async def load_config():
                         'LEECH_FILENAME_SUFFIX': LEECH_FILENAME_SUFFIX,
                         'LEECH_FILENAME_CAPTION': LEECH_FILENAME_CAPTION,
                         'LEECH_FILENAME_REMNAME': LEECH_FILENAME_REMNAME,
+                        'LINKS_LOG_ID': LINKS_LOG_ID,
                         'MIRROR_FILENAME_PREFIX': MIRROR_FILENAME_PREFIX,
                         'MIRROR_FILENAME_SUFFIX': MIRROR_FILENAME_SUFFIX,
                         'MIRROR_FILENAME_REMNAME': MIRROR_FILENAME_REMNAME,
@@ -664,7 +669,7 @@ async def edit_variable(_, message, pre_message, key):
     elif key == 'DOWNLOAD_DIR':
         if not value.endswith('/'):
             value += '/'
-    elif key in ['LEECH_LOG_ID', 'RSS_CHAT_ID']:
+    elif key in ['LINKS_LOG_ID', 'RSS_CHAT_ID']:
         value = int(value)
     elif key == 'STATUS_UPDATE_INTERVAL':
         value = int(value)

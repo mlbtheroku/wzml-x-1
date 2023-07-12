@@ -107,4 +107,4 @@ class DDLUploader:
     async def cancel_download(self):
         self.__is_cancelled = True
         LOGGER.info(f"Cancelling Upload: {self.name}")
-        await self.__listener.onUploadError('Your upload has been stopped!')
+        await self.__listener.onUploadError('Cancelled by user!')

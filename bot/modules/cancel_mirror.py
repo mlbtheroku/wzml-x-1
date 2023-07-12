@@ -14,6 +14,7 @@ from bot.helper.telegram_helper import button_build
 async def cancel_mirror(_, message):
     user_id = message.from_user.id
     msg = message.text.split()
+    await deleteMessage(message)
     if len(msg) > 1:
         gid = msg[1]
         dl = await getDownloadByGid(gid)

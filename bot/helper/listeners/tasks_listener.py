@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 from random import choice
 from time import time
+from pytz import timezone
+from datetime import datetime
+from urllib.parse import unquote, quote
 from requests import utils as rutils
 from aiofiles.os import path as aiopath, remove as aioremove, listdir, makedirs
 from os import walk, path as ospath
@@ -12,7 +15,7 @@ from pyrogram.enums import ChatType
 from bot import OWNER_ID, Interval, aria2, DOWNLOAD_DIR, download_dict, download_dict_lock, LOGGER, bot_name, DATABASE_URL, \
     MAX_SPLIT_SIZE, config_dict, status_reply_dict_lock, user_data, non_queued_up, non_queued_dl, queued_up, \
     queued_dl, queue_dict_lock, bot, GLOBAL_EXTENSION_FILTER
-from bot.helper.ext_utils.bot_utils import extra_btns, sync_to_async, get_readable_file_size, get_readable_time, is_mega_link, is_gdrive_link
+from bot.helper.ext_utils.bot_utils import extra_btns, sync_to_async, get_readable_file_size, get_readable_time, is_mega_link, is_gdrive_link, new_thread
 from bot.helper.ext_utils.fs_utils import get_base_name, get_path_size, clean_download, clean_target, \
     is_first_archive_split, is_archive, is_archive_split, join_files
 from bot.helper.ext_utils.leech_utils import split_file, format_filename
@@ -30,7 +33,7 @@ from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
 from bot.helper.mirror_utils.upload_utils.pyrogramEngine import TgUploader
 from bot.helper.mirror_utils.upload_utils.ddlEngine import DDLUploader
 from bot.helper.mirror_utils.rclone_utils.transfer import RcloneTransferHelper
-from bot.helper.telegram_helper.message_utils import sendBot, sendMessage, delete_all_messages, delete_links, sendMultiMessage, update_all_messages
+from bot.helper.telegram_helper.message_utils import sendCustomMsg, sendMessage, editMessage, delete_all_messages, delete_links, sendMultiMessage, update_all_messages, five_minute_del
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.db_handler import DbManger
 from bot.helper.themes import BotTheme
@@ -63,7 +66,8 @@ class MirrorLeechListener:
         self.upPath = upPath
         self.random_pic = 'IMAGES'
         self.join = join
-        self.leechlogmsg = None
+        self.linkslogmsg = None
+        self.botpmmsg = None
         self.upload_details = {}
         self.source_url = (
             source_url
@@ -72,7 +76,9 @@ class MirrorLeechListener:
             if source_url
             else message.link
         )
+        self.source_msg = ''
         self.__setModeEng()
+        self.__parseSource()
 
     async def clean(self):
         try:
@@ -86,13 +92,54 @@ class MirrorLeechListener:
             pass
 
     def __setModeEng(self):
-        mode = 'leech' if self.isLeech else 'clone' if self.isClone else 'rclone' if self.upPath not in ['gd', 'ddl'] else 'DDL' if self.upPath != 'gd' else 'gdrive'
-        mode += ' as zip' if self.compress else ' as unzip' if self.extract else ''
+        mode = (
+            'leech'
+            if self.isLeech
+            else 'clone'
+            if self.isClone
+            else 'rclone'
+            if self.upPath not in ['gd', 'ddl']
+            else 'DDL'
+            if self.upPath != 'gd'
+            else 'gdrive'
+        ) + (' as zip' if self.compress else ' as unzip' if self.extract else '')
         mode += f" | {'qbit' if self.isQbit else 'ytdlp' if self.isYtdlp else 'gdrive' if (self.isClone or self.isGdrive) else 'mega' if self.isMega else 'aria2' if self.source_url and self.source_url != self.message.link else 'tgram'}"
-        
         self.upload_details['mode'] = mode
-    
+        
+    def __parseSource(self):
+        if self.source_url == self.message.link:
+            file = self.message.reply_to_message
+            media = getattr(file, file.media.value)
+            self.source_msg = f'┎ <b>Name:</b> <i>{media.file_name}</i>\n' \
+                              f'┠ <b>Type:</b> {media.mime_type}\n' \
+                              f'┠ <b>Size:</b> {get_readable_file_size(media.file_size)}\n' \
+                              f'┠ <b>Created Date:</b> {media.date}\n' \
+                              f'┖ <b>Media Type:</b> {(file.media.value).capitalize()}'
+        elif self.source_url.startswith('https://t.me/share/url?url='):
+            msg = self.source_url.replace('https://t.me/share/url?url=', '')
+            if msg.startswith('magnet'):
+                mag = unquote(msg).split('&')
+                tracCount, name, amper = 0, '', False
+                for check in mag:
+                    if check.startswith('tr='):
+                        tracCount += 1
+                    elif check.startswith('magnet:?xt=urn:btih:'):
+                        hashh = check.replace('magnet:?xt=urn:btih:', '')
+                    else:
+                        name += ('&' if amper else '') + check.replace("dn=", "")
+                        amper = True
+                self.source_msg = f"┎ <b>Name:</b> <i>{name}</i>\n┠ <b>Magnet Hash:</b> <code>{hashh}</code>\n┠ <b>Total Trackers:</b> {tracCount} \n┖ <b>Share:</b> <a href='https://t.me/share/url?url={quote(msg)}'>Share To Telegram</a>"
+            else: self.source_msg = f"<code>{msg}</code>"
+        else:
+            self.source_msg = f"<code>{self.source_url}</code>"
+        
     async def onDownloadStart(self):
+        if config_dict['LINKS_LOG_ID']:
+            dispTime = datetime.now(timezone('Asia/Dhaka')).strftime('%d/%m/%y, %I:%M:%S %p')
+            self.linkslogmsg = await sendCustomMsg(config_dict['LINKS_LOG_ID'], BotTheme('LINKS_START', Mode=self.upload_details['mode'], Tag=self.tag) + BotTheme('LINKS_SOURCE', On=dispTime, Source=self.source_msg))
+        user_dict = user_data.get(self.message.from_user.id, {})
+        if config_dict['BOT_PM'] or user_dict.get('bot_pm'):
+            self.botpmmsg = await sendCustomMsg(self.message.from_user.id, BotTheme('L_PM_START'))
         if self.isSuperGroup and config_dict['INCOMPLETE_TASK_NOTIFIER'] and DATABASE_URL:
             await DbManger().add_incomplete_task(self.message.chat.id, self.message.link, self.tag)
 
@@ -387,44 +434,47 @@ class MirrorLeechListener:
                     msg += BotTheme('PM_BOT_MSG')
                 await sendMessage(self.message, msg, photo=self.random_pic)
             else:
-                toPM = False
-                if config_dict['BOT_PM'] or user_dict.get('bot_pm'):
-                    await sendBot(self.message, msg + BotTheme('PM_BOT_MSG'), photo=self.random_pic)
-                    if self.isSuperGroup:
-                        btn = ButtonMaker()
-                        if self.source_url and config_dict['SOURCE_LINK']:
-                            btn.ubutton(BotTheme('SOURCE_URL'), self.source_url)
-                        btn.ubutton(BotTheme('CHECK_PM'), f"https://t.me/{bot_name}", 'header')
-                        btn = extra_btns(btn)
-                        toPM = True
-                        await sendMessage(self.message, msg + BotTheme('L_BOT_MSG'), btn.build_menu(2), self.random_pic)
-                msg += BotTheme('L_LL_MSG')
-                if self.leechlogmsg:
-                    self.leechlogmsg._client = bot
-                fmsg = '\n\n'
+                dispTime = datetime.now(timezone('Asia/Dhaka')).strftime('%d/%m/%y, %I:%M:%S %p')
+                attachmsg = True
+                fmsg, totalmsg = '\n\n', ''
                 for index, (link, name) in enumerate(files.items(), start=1):
                     fmsg += f"{index}. <a href='{link}'>{name}</a>\n"
-                    limit = 4000 if not config_dict['IMAGES'] else 1000
-                    if len(fmsg.encode() + msg.encode()) > limit:
+                    totalmsg = (msg + BotTheme('LINKS_SOURCE', On=dispTime, Source=self.source_msg) + BotTheme('L_LL_MSG') + fmsg) if attachmsg else fmsg
+                    if len(totalmsg.encode()) > 4000:
                         if config_dict['SAVE_MSG']:
                             buttons.ibutton(BotTheme('SAVE_MSG'), 'save', 'footer')
-                        if self.source_url and config_dict['SOURCE_LINK']:
-                            buttons.ubutton(BotTheme('SOURCE_URL'), self.source_url)
-                        if self.leechlogmsg or not toPM:
-                            log_msg = await sendMessage(self.leechlogmsg if self.leechlogmsg else self.message, msg + fmsg, buttons.build_menu(1), self.random_pic)
+                        if self.linkslogmsg:
+                            await editMessage(self.linkslogmsg, totalmsg, buttons.build_menu(1))
+                            self.linkslogmsg = await sendMessage(self.linkslogmsg, "<i>Fetching Details...</i>")
+                        elif not (config_dict['BOT_PM'] or user_dict.get('bot_pm')):
+                            await sendMessage(self.message, msg + BotTheme('L_LL_MSG') + fmsg, buttons.build_menu(1))
+                        attachmsg = False
                         await sleep(1)
                         fmsg = '\n\n'
                 if fmsg != '\n\n':
                     if config_dict['SAVE_MSG']:
                         buttons.ibutton(BotTheme('SAVE_MSG'), 'save', 'footer')
+                    if self.linkslogmsg:
+                        await editMessage(self.linkslogmsg, totalmsg, buttons.build_menu(1))
+                    elif not (config_dict['BOT_PM'] or user_dict.get('bot_pm')):
+                        await sendMessage(self.message, msg + BotTheme('L_LL_MSG') + fmsg, buttons.build_menu(1))
+                btn = ButtonMaker()
+                if config_dict['BOT_PM'] or user_dict.get('bot_pm'):
+                    await sendMessage(self.botpmmsg, msg + BotTheme('PM_BOT_MSG'), photo=self.random_pic)
+                    if self.isSuperGroup:
+                        btn.ibutton(BotTheme('CHECK_PM'), f"wzmlx {user_id} botpm", 'header')
+                        if self.source_url and config_dict['SOURCE_LINK']:
+                            btn.ubutton(BotTheme('SOURCE_URL'), self.source_url)
+                        btn = extra_btns(btn)
+                        await sendMessage(self.message, msg + BotTheme('L_BOT_MSG'), btn.build_menu(1), self.random_pic)
+                    else:
+                        await self.botpmmsg.delete()
+                elif self.linkslogmsg:
                     if self.source_url and config_dict['SOURCE_LINK']:
-                        buttons.ubutton(BotTheme('SOURCE_URL'), self.source_url)
-                    if self.leechlogmsg or not toPM:
-                        log_msg = await sendMessage(self.leechlogmsg if self.leechlogmsg else self.message, msg + fmsg, buttons.build_menu(1), self.random_pic)
-                if self.leechlogmsg and not (config_dict['BOT_PM'] or user_dict.get('bot_pm')):
-                    buttons = ButtonMaker()
-                    buttons.ubutton(BotTheme('CHECK_LL'), log_msg.link)
-                    await sendMessage(self.message, msg, buttons.build_menu(1), self.random_pic)
+                        btn.ubutton(BotTheme('SOURCE_URL'), self.source_url)
+                    btn = extra_btns(btn)
+                    await sendMessage(self.message, msg + BotTheme('L_LL_MSG'), btn.build_menu(1), self.random_pic)
+                    
             if self.seed:
                 if self.newDir:
                     await clean_target(self.newDir)
@@ -475,31 +525,35 @@ class MirrorLeechListener:
                 button = None
             msg += BotTheme('M_CC', Tag=self.tag)
 
-
-            if config_dict['BOT_PM'] or user_dict.get('bot_pm'):
-                await sendBot(self.message, msg, button, self.random_pic)
-                nmsg = msg + BotTheme('M_BOT_MSG')
-                if button is not None:
+            if config_dict['MIRROR_LOG_ID']:
+                buttonss = button
+                if button is not None and config_dict['SAVE_MSG']:
+                    buttons.ibutton(BotTheme('SAVE_MSG'), 'save', 'footer')
+                    buttonss = buttons.build_menu(2)
+                log_msg = list((await sendMultiMessage(config_dict['MIRROR_LOG_ID'], msg, buttonss, self.random_pic)).values())[0]
+                if self.linkslogmsg:
+                    dispTime = datetime.now(timezone('Asia/Dhaka')).strftime('%d/%m/%y, %I:%M:%S %p')
                     if config_dict['SAVE_MSG']:
-                        buttons.ibutton(BotTheme('SAVE_MSG'), 'save', 'footer')
-                    button = buttons.build_menu(2)
-                btns = ButtonMaker()
-                btns = extra_btns(btns)
+                        btns = ButtonMaker()
+                        btns.ibutton(BotTheme('SAVE_MSG'), 'save', 'footer')
+                    await editMessage(self.linkslogmsg, (msg + BotTheme('LINKS_SOURCE', On=dispTime, Source=self.source_msg) + BotTheme('L_LL_MSG') + f"\n\n<a href='{log_msg.link}'>{escape(name)}</a>\n"), buttons.build_menu(1))
+            
+            buttons = ButtonMaker()
+            if config_dict['BOT_PM'] or user_dict.get('bot_pm'):
+                await sendMessage(self.botpmmsg, msg, button, self.random_pic)
+                if self.isSuperGroup:
+                    buttons.ibutton(BotTheme('CHECK_PM'), f"wzmlx {user_id} botpm", 'header')
+                    if self.source_url and config_dict['SOURCE_LINK']:
+                        buttons.ubutton(BotTheme('SOURCE_URL'), self.source_url)
+                    buttons = extra_btns(buttons)
+                    await sendMessage(self.message, msg + BotTheme('M_BOT_MSG'), buttons.build_menu(1), self.random_pic)
+                else:
+                    await self.botpmmsg.delete()
+            elif self.linkslogmsg:
                 if self.source_url and config_dict['SOURCE_LINK']:
-                    btns.ubutton(BotTheme('SOURCE_URL'), self.source_url)
-                btns.ubutton(BotTheme('CHECK_PM'), f"https://t.me/{bot_name}", 'header')
-                await sendMessage(self.message, nmsg, btns.build_menu(1), self.random_pic)
-            else:
-                if config_dict['SAVE_MSG']:
-                    if button is not None:
-                        if self.source_url and config_dict['SOURCE_LINK']:
-                            buttons.ubutton(BotTheme('SOURCE_URL'), self.source_url)
-                        buttons.ibutton(BotTheme('SAVE_MSG'), 'save', 'footer')
-                        button = buttons.build_menu(2)
-                await sendMessage(self.message, msg, button, self.random_pic)
-
-            if ids := config_dict['MIRROR_LOG_ID']:
-                await sendMultiMessage(self.message, ids, msg, button, self.random_pic)
+                    buttons.ubutton(BotTheme('SOURCE_URL'), self.source_url)
+                buttons = extra_btns(buttons)
+                await sendMessage(self.message, msg, buttons.build_menu(1), self.random_pic)
 
             if self.seed:
                 if self.newDir:
@@ -529,6 +583,7 @@ class MirrorLeechListener:
         await start_from_queued()
         await delete_links(self.message)
 
+    @new_thread
     async def onDownloadError(self, error, button=None):
         async with download_dict_lock:
             if self.uid in download_dict.keys():
@@ -542,7 +597,7 @@ Your download has been stopped!
 
 <b>• Reason:</b> {escape(error)}
 <b>• Elapsed:</b> {get_readable_time(time() - self.message.date.timestamp())}'''
-        await sendMessage(self.message, msg, button)
+        reply_message = await sendMessage(self.message, msg, button)
         if count == 0:
             await self.clean()
         else:
@@ -568,7 +623,9 @@ Your download has been stopped!
         await clean_download(self.dir)
         if self.newDir:
             await clean_download(self.newDir)
+        await five_minute_del(reply_message)
 
+    @new_thread
     async def onUploadError(self, error):
         async with download_dict_lock:
             if self.uid in download_dict.keys():
@@ -579,7 +636,7 @@ Your upload has been stopped!
 
 <b>• Reason:</b> {escape(error)}
 <b>• Elapsed:</b> {get_readable_time(time() - self.message.date.timestamp())}'''
-        await sendMessage(self.message, msg)
+        reply_message = await sendMessage(self.message, msg)
         if count == 0:
             await self.clean()
         else:
@@ -605,3 +662,5 @@ Your upload has been stopped!
         await clean_download(self.dir)
         if self.newDir:
             await clean_download(self.newDir)
+        await five_minute_del(reply_message)
+        

@@ -383,10 +383,10 @@ class RcloneTransferHelper:
                 pass
         if self.__is_download:
             LOGGER.info(f"Cancelling Download: {self.name}")
-            await self.__listener.onDownloadError('Download stopped by user!')
+            await self.__listener.onDownloadError('Stopped by user!')
         elif self.__is_upload:
             LOGGER.info(f"Cancelling Upload: {self.name}")
-            await self.__listener.onUploadError('your upload has been stopped!')
+            await self.__listener.onUploadError('Cancelled by user!')
         else:
             LOGGER.info(f"Cancelling Clone: {self.name}")
-            await self.__listener.onUploadError('your clone has been stopped!')
+            await self.__listener.onUploadError('Your clone has been stopped!')

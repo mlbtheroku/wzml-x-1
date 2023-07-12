@@ -21,7 +21,7 @@ from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, private, regex
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from bot import bot, config_dict, user_data, botStartTime, LOGGER, Interval, DATABASE_URL, QbInterval, INCOMPLETE_TASK_NOTIFIER, scheduler
+from bot import bot, config_dict, user_data, botStartTime, LOGGER, Interval, DATABASE_URL, QbInterval, INCOMPLETE_TASK_NOTIFIER, scheduler, bot_name
 from .helper.ext_utils.fs_utils import start_cleanup, clean_all, exit_clean_up
 from .helper.ext_utils.bot_utils import get_progress_bar_string, get_readable_file_size, get_readable_time, cmd_exec, sync_to_async, set_commands, update_user_ldata, new_thread, format_validity_time, new_task
 from .helper.ext_utils.db_handler import DbManger
@@ -77,10 +77,11 @@ async def stats(_, message):
 
 @new_thread
 async def start(client, message):
-    await DbManger().update_pm_users(message.from_user.id)
     buttons = ButtonMaker()
     reply_markup = buttons.build_menu(2)
-    if len(message.command) > 1 and config_dict['TOKEN_TIMEOUT']:
+    if len(message.command) > 1 and message.command[1] == "wzmlx":
+        await message.delete()
+    elif len(message.command) > 1 and config_dict['TOKEN_TIMEOUT']:
         userid = message.from_user.id
         encrypted_url = message.command[1]
         input_token, pre_uid = (b64decode(encrypted_url.encode()).decode()).split('&&')
@@ -101,6 +102,7 @@ async def start(client, message):
         await sendMessage(message, BotTheme('ST_BOTPM'), photo='IMAGES')
     else:
         await sendMessage(message, BotTheme('ST_UNAUTH'), photo='IMAGES')
+    await DbManger().update_pm_users(message.from_user.id)
 
 async def token_callback(_, query):
     user_id = query.from_user.id
@@ -144,8 +146,8 @@ async def wzmlxcb(_, query):
     user_id = query.from_user.id
     data = query.data.split()
     if user_id != int(data[1]):
-        return await query.answer(text="You're not sudo!", show_alert=True)
-    if data[2] == "logdisplay":
+        return await query.answer(text="This message not your's!", show_alert=True)
+    elif data[2] == "logdisplay":
         await query.answer()
         async with aiopen('log.txt', 'r') as f:
             logFileLines = (await f.read()).splitlines()
@@ -163,12 +165,16 @@ async def wzmlxcb(_, query):
                 ind += 1
             startLine = f"<b>Showing Last {ind} Lines from log.txt:</b> \n\n----------<b>START LOG</b>----------\n\n"
             endLine = "\n----------<b>END LOG</b>----------"
-            reply_message = await sendMessage(message, startLine + escape(Loglines) + endLine)
+            btn = ButtonMaker()
+            btn.ibutton('Close', f'wzmlx {user_id} close')
+            reply_message = await sendMessage(message, startLine + escape(Loglines) + endLine, btn.build_menu(1))
             await query.edit_message_reply_markup(None)
             await deleteMessage(message)
             await one_minute_del(reply_message)
         except Exception as err:
             LOGGER.error(f"TG Log Display : {str(err)}")
+    elif data[2] == "botpm":
+        await query.answer(url=f"https://t.me/{bot_name}?start=wzmlx")
     else:
         await query.answer()
         await message.delete()

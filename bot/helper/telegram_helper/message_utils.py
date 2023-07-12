@@ -45,32 +45,31 @@ async def sendMessage(message, text, buttons=None, photo=None):
         return str(e)
 
 
-async def sendBot(message, text, buttons=None, photo=None):
+async def sendCustomMsg(chat_id, text, buttons=None, photo=None):
     try:
-        user_id = message.from_user.id
         if photo:
             try:
                 if photo == 'IMAGES':
                     photo = rchoice(config_dict['IMAGES'])
-                return await message._client.send_photo(chat_id=user_id, photo=photo, caption=text,
+                return await bot.send_photo(chat_id=chat_id, photo=photo, caption=text,
                                                         reply_markup=buttons, disable_notification=True)
             except IndexError:
                 pass
             except (PhotoInvalidDimensions, WebpageCurlFailed, MediaEmpty):
                 des_dir = await download_image_url(photo)
-                await sendBot(message, text, buttons, des_dir)
+                await sendCustomMsg(chat_id, text, buttons, des_dir)
                 await aioremove(des_dir)
                 return
             except Exception as e:
                 LOGGER.error(format_exc())
-        return await message._client.send_message(chat_id=user_id, text=text, disable_web_page_preview=True,
+        return await bot.send_message(chat_id=chat_id, text=text, disable_web_page_preview=True,
                                                   disable_notification=True, reply_markup=buttons)
     except FloodWait as f:
         LOGGER.warning(str(f))
         await sleep(f.value * 1.2)
-        return await sendBot(message, text, buttons, photo)
+        return await sendCustomMsg(chat_id, text, buttons, photo)
     except ReplyMarkupInvalid:
-        return await sendBot(message, text, None, photo)
+        return await sendCustomMsg(chat_id, text, None, photo)
     except Exception as e:
         LOGGER.error(format_exc())
         return str(e)
@@ -88,7 +87,6 @@ async def chat_info(channel_id):
     except PeerIdInvalid as e:
         LOGGER.error(f"{e.NAME}: {e.MESSAGE} for {channel_id}")
         return None
-        
 
 async def isAdmin(message, user_id=None):
     if message.chat.type == message.chat.type.PRIVATE:
@@ -99,8 +97,8 @@ async def isAdmin(message, user_id=None):
         member = await message.chat.get_member(message.from_user.id)
     return member.status in [member.status.ADMINISTRATOR, member.status.OWNER]
 
-
-async def sendMultiMessage(message, chat_ids, text, buttons=None, photo=None):
+async def sendMultiMessage(chat_ids, text, buttons=None, photo=None):
+    msg_dict = {}
     for channel_id in chat_ids.split():
         chat = await chat_info(channel_id)
         try:
@@ -108,26 +106,30 @@ async def sendMultiMessage(message, chat_ids, text, buttons=None, photo=None):
                 try:
                     if photo == 'IMAGES':
                         photo = rchoice(config_dict['IMAGES'])
-                    return await message._client.send_photo(chat_id=chat.id, photo=photo, caption=text,
+                    sent = await bot.send_photo(chat_id=chat.id, photo=photo, caption=text,
                                                      reply_markup=buttons, disable_notification=True)
+                    msg_dict[chat.id] = sent
+                    continue
                 except IndexError:
                     pass
                 except (PhotoInvalidDimensions, WebpageCurlFailed, MediaEmpty):
                     des_dir = await download_image_url(photo)
-                    await sendMultiMessage(message, chat_ids, text, buttons, des_dir)
+                    await sendMultiMessage(chat_ids, text, buttons, des_dir)
                     await aioremove(des_dir)
                     return
                 except Exception as e:
                     LOGGER.error(str(e))
-            return await message._client.send_message(chat_id=chat.id, text=text, disable_web_page_preview=True,
+            sent = await bot.send_message(chat_id=chat.id, text=text, disable_web_page_preview=True,
                                                disable_notification=True, reply_markup=buttons)
+            msg_dict[chat.id] = sent
         except FloodWait as f:
             LOGGER.warning(str(f))
             await sleep(f.value * 1.2)
-            return await sendMultiMessage(message, chat_ids, text, buttons, photo)
+            return await sendMultiMessage(chat_ids, text, buttons, photo)
         except Exception as e:
             LOGGER.error(str(e))
             return str(e)
+    return msg_dict
 
 
 async def editMessage(message, text, buttons=None, photo=None):
@@ -214,11 +216,9 @@ async def get_tg_link_content(link):
         msg = re_match(r"https:\/\/t\.me\/(?:c\/)?([^\/]+)(?:\/[^\/]+)?\/([0-9]+)", link)
     else:
         private = True
-        msg = re_match(
-            r"tg:\/\/openmessage\?user_id=([0-9]+)&message_id=([0-9]+)", link)
+        msg = re_match(r"tg:\/\/openmessage\?user_id=([0-9]+)&message_id=([0-9]+)", link)
         if not user:
-            raise TgLinkException(
-                'USER_SESSION_STRING required for this private link!')
+            raise TgLinkException('USER_SESSION_STRING required for this private link!')
 
     chat = msg.group(1)
     msg_id = int(msg.group(2))
