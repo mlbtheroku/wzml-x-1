@@ -134,10 +134,7 @@ async def mdl_callback(_, query):
         buttons = ButtonMaker()
         buttons.ibutton("🚫 Close 🚫", f"mdl {user_id} close")
         template = config_dict['MDL_TEMPLATE']
-        if mdl and template != "":
-            cap = template.format(**mdl)
-        else:
-            cap = "No Data Received"
+        cap = template.format(**mdl) if mdl and template != "" else "No Data Received"
         if mdl.get('poster'):
             try: #Invoke Raw Functions
                 await message.reply_to_message.reply_photo(mdl["poster"], caption=cap, reply_markup=buttons.build_menu(1))

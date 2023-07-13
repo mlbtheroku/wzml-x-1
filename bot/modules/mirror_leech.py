@@ -211,6 +211,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
                 if str(e).startswith('ERROR:'):
                     await editMessage(process_msg, str(e))
                     await delete_links(message)
+                    await one_minute_del(process_msg)
                     return
             await process_msg.delete()
 

@@ -127,6 +127,8 @@ async def gdcloneNode(message, link, tag):
             LOGGER.error(str(e))
             if str(e).startswith('ERROR:'):
                 await editMessage(process_msg, str(e))
+                await delete_links(message)
+                await one_minute_del(process_msg)
                 return
         await process_msg.delete()
     if is_gdrive_link(link):

@@ -582,6 +582,9 @@ def is_valid_token(url, token):
 def tiny(long_url):
     s = pyshorteners.Shortener()
     try:
-        return s.tinyurl.short(long_url)
+        short_url = s.tinyurl.short(long_url)
+        LOGGER.info(f'tinyfied {long_url} to {short_url}')
+        return short_url
     except Exception:
+        LOGGER.error(f'Failed to shorten URL: {long_url}')
         return long_url
