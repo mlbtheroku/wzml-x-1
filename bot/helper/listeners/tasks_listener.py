@@ -455,7 +455,8 @@ class MirrorLeechListener:
                     if config_dict['SAVE_MSG']:
                         buttons.ibutton(BotTheme('SAVE_MSG'), 'save', 'footer')
                     if self.linkslogmsg:
-                        await editMessage(self.linkslogmsg, totalmsg, buttons.build_menu(1))
+                        LOGGER.info(f'check')
+                        await editMessage(self.linkslogmsg, msg + BotTheme('L_LL_MSG') + fmsg)
                     elif not (config_dict['BOT_PM'] or user_dict.get('bot_pm')):
                         await sendMessage(self.message, msg + BotTheme('L_LL_MSG') + fmsg, buttons.build_menu(1))
                 btn = ButtonMaker()
@@ -533,11 +534,7 @@ class MirrorLeechListener:
                     buttonss = buttons.build_menu(2)
                 log_msg = list((await sendMultiMessage(config_dict['MIRROR_LOG_ID'], msg, buttonss, self.random_pic)).values())[0]
                 if self.linkslogmsg:
-                    dispTime = datetime.now(timezone('Asia/Dhaka')).strftime('%d/%m/%y, %I:%M:%S %p')
-                    if config_dict['SAVE_MSG']:
-                        btns = ButtonMaker()
-                        btns.ibutton(BotTheme('SAVE_MSG'), 'save', 'footer')
-                    await editMessage(self.linkslogmsg, (msg + BotTheme('LINKS_SOURCE', On=dispTime, Source=self.source_msg) + BotTheme('L_LL_MSG') + f"\n\n<a href='{log_msg.link}'>{escape(name)}</a>\n"), buttons.build_menu(1))
+                    await deleteMessage(self.linkslogmsg)
             
             buttons = ButtonMaker()
             if config_dict['BOT_PM'] or user_dict.get('bot_pm'):
