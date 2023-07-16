@@ -134,7 +134,12 @@ class TgUploader:
         msg_user = self.__listener.message.from_user
         if config_dict['LEECH_LOG_ID']:
             try:
-                self.__leechmsg = await sendMultiMessage(config_dict['LEECH_LOG_ID'], BotTheme('L_LOG_START', mention=msg_user.mention(style='HTML'), uid=msg_user.id, msg_link=self.__listener.source_url))
+                if self.__listener.source_url:
+                    sbtn = ButtonMaker()
+                    sbtn.ubutton('Source', self.__listener.source_url)
+                    self.__leechmsg = await sendMultiMessage(config_dict['LEECH_LOG_ID'], BotTheme('L_LOG_START', mention=msg_user.mention(style='HTML'), uid=msg_user.id, msg_link=self.__listener.source_url), sbtn.build_menu(1))
+                else:
+                    self.__leechmsg = await sendMultiMessage(config_dict['LEECH_LOG_ID'], BotTheme('L_LOG_START', mention=msg_user.mention(style='HTML'), uid=msg_user.id, msg_link=self.__listener.source_url))
             except Exception as er:
                 await self.__listener.onUploadError(str(er))
                 return False

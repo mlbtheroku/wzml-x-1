@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 class style:
-    LINKS_START = """<b><i>Task Started</i></b>
-┠ <b>Mode:</b> {Mode}
-┖ <b>By:</b> {Tag}\n\n"""
-    LINKS_SOURCE = """➲ <b>Source:</b>
-┖ <b>Added On:</b> {On}
-------------------------------------------
-{Source}
-------------------------------------------\n\n"""
+    LINKS_START = """<b>Task Started</b>
+
+<b>• Mode:</b> {Mode}
+<b>• By:</b> {Tag}\n\n"""
 
     ST_MSG = '''This bot can mirror all your links|files|torrents to Google Drive or any rclone cloud or to telegram or to ddl servers.
 <b>Type {help_command} to get a list of available commands</b>'''
@@ -34,7 +30,7 @@ class style:
 
     # async def __msg_to_reply(self): ---> pyrogramEngine.py
     L_PM_START =          "<b>Task started</b>"
-    L_LOG_START =         "<b>Task started</b>\n\n<b>• User :</b> {mention}\n<b>• User:</b> <code>{uid}</code>\n<b>• Source :</b> <a href='{msg_link}'>Click Here</a>"
+    L_LOG_START =         "<b>Task started</b>\n\n<b>• User:</b> {mention}\n<b>• ID:</b> <code>{uid}</code>"
 
     # async def onUploadComplete(): ---> tasks_listener.py
     NAME =                '{Name}\n\n'
