@@ -112,12 +112,13 @@ class QbittorrentStatus:
                 LOGGER.info(f"Cancelling Download: {self.__info.name}")
                 msg = 'Download stopped by user!'
             await sleep(0.3)
-            await self.__listener.onDownloadError(msg)
             await sync_to_async(self.__client.torrents_delete, torrent_hashes=self.__info.hash, delete_files=True)
             await sync_to_async(self.__client.torrents_delete_tags, tags=self.__info.tags)
             async with qb_listener_lock:
                 if self.__info.tags in QbTorrents:
                     del QbTorrents[self.__info.tags]
+            await self.__listener.onDownloadError(msg)
+            
 
     def eng(self):
         return EngineStatus.STATUS_QB

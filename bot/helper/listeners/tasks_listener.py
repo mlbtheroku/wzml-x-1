@@ -33,7 +33,7 @@ from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
 from bot.helper.mirror_utils.upload_utils.pyrogramEngine import TgUploader
 from bot.helper.mirror_utils.upload_utils.ddlEngine import DDLUploader
 from bot.helper.mirror_utils.rclone_utils.transfer import RcloneTransferHelper
-from bot.helper.telegram_helper.message_utils import sendCustomMsg, sendMessage, editMessage, delete_all_messages, delete_links, sendMultiMessage, update_all_messages, five_minute_del, deleteMessage
+from bot.helper.telegram_helper.message_utils import sendCustomMsg, sendMessage, editMessage, delete_all_messages, delete_links, sendMultiMessage, update_all_messages, deleteMessage
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.db_handler import DbManger
 from bot.helper.themes import BotTheme
@@ -596,7 +596,6 @@ class MirrorLeechListener:
         await start_from_queued()
         await delete_links(self.message)
 
-    @new_thread
     async def onDownloadError(self, error, button=None):
         async with download_dict_lock:
             if self.uid in download_dict.keys():
@@ -610,7 +609,7 @@ Your download has been stopped!
 
 <b>• Reason:</b> {escape(error)}
 <b>• Elapsed:</b> {get_readable_time(time() - self.message.date.timestamp())}'''
-        reply_message = await sendMessage(self.message, msg, button)
+        await sendMessage(self.message, msg, button)
         if count == 0:
             await self.clean()
         else:
@@ -636,9 +635,7 @@ Your download has been stopped!
         await clean_download(self.dir)
         if self.newDir:
             await clean_download(self.newDir)
-        await five_minute_del(reply_message)
-
-    @new_thread
+    
     async def onUploadError(self, error):
         async with download_dict_lock:
             if self.uid in download_dict.keys():
@@ -649,7 +646,7 @@ Your upload has been stopped!
 
 <b>• Reason:</b> {escape(error)}
 <b>• Elapsed:</b> {get_readable_time(time() - self.message.date.timestamp())}'''
-        reply_message = await sendMessage(self.message, msg)
+        await sendMessage(self.message, msg)
         if count == 0:
             await self.clean()
         else:
@@ -675,5 +672,4 @@ Your upload has been stopped!
         await clean_download(self.dir)
         if self.newDir:
             await clean_download(self.newDir)
-        await five_minute_del(reply_message)
         
