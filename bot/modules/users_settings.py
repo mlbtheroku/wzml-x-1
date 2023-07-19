@@ -90,7 +90,8 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         remname = 'Not Exists' if (val := user_dict.get('remname')) == '' else val
 
         
-        text = BotTheme('UNIVERSAL', NAME=name, YT=escape(ytopt), DT=f"{dailytas}/{dailytl}", BOT_PM=bot_pm, MEDIAINFO=mediainfo)
+        text = BotTheme('UNIVERSAL', NAME=name, YT=escape(ytopt), DT=f"{dailytas}/{dailytl}", BOT_PM=bot_pm, MEDIAINFO=mediainfo, MREMNAME=escape(remname), MPREFIX=escape(prefix),
+                MSUFFIX=escape(suffix))
         buttons.ibutton("Back", f"userset {user_id} back", "footer")
         buttons.ibutton("Close", f"userset {user_id} close", "footer")
         button = buttons.build_menu(2)

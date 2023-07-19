@@ -94,7 +94,11 @@ class style:
 <b>• YT-DLP Options :</b> <b><code>{YT}</code></b>
 <b>• Daily Tasks :</b> <code>{DT}</code> per day
 <b>• MediaInfo Mode :</b> <code>{MEDIAINFO}</code>
-<b>• User Bot PM :</b> <code>{BOT_PM}</code>'''
+<b>• User Bot PM :</b> <code>{BOT_PM}</code>
+<b>• Prefix :</b> <code>{MPREFIX}</code>
+<b>• Suffix :</b> <code>{MSUFFIX}</code>
+<b>• Remname :</b> <code>{MREMNAME}</code>
+'''
 
     MIRROR = '''<b>Mirror Settings for {NAME}</b>
 
