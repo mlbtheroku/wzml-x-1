@@ -23,14 +23,11 @@ from bot.helper.themes import BotTheme
 
 handler_dict = {}
 desp_dict = {'rcc': ['RClone is a command-line program to sync files and directories to and from different cloud storage providers like GDrive, OneDrive...', 'Send rcl.conf. Timeout: 60 sec'],
-            'lprefix': ['Leech Filename Prefix is the Front Part attacted with the Filename of the Leech Files.', 'Send Leech Filename Prefix. Timeout: 60 sec'],
-            'lsuffix': ['Leech Filename Suffix is the End Part attached with the Filename of the Leech Files', 'Send Leech Filename Suffix. Timeout: 60 sec'],
-            'lremname': ['Leech Filename Remname is combination of Regex(s) used for removing or manipulating Filename of the Leech Files', 'Send Leech Filename Remname. Timeout: 60 sec'],
+            'prefix': ['Filename Prefix is the Front Part attacted with the Filename of the Leech Files.', 'Send Leech Filename Prefix. Timeout: 60 sec'],
+            'suffix': ['Filename Suffix is the End Part attached with the Filename of the Leech Files', 'Send Leech Filename Suffix. Timeout: 60 sec'],
+            'remname': ['Filename Remname is combination of Regex(s) used for removing or manipulating Filename of the Leech Files', 'Send Leech Filename Remname. Timeout: 60 sec'],
             'lcaption': ['Leech Caption is the Custom Caption on the Leech Files Uploaded by the bot', 'Send Leech Caption. You can add HTML tags Timeout: 60 sec'],
             'ldump': ['Leech Files User Dump for Personal Use as a Storage.', 'Send Leech Dump Channel ID. Timeout: 60 sec'],
-            'mprefix': ['Mirror Filename Prefix is the Front Part attacted with the Filename of the Mirrored/Cloned Files.', 'Send Mirror Filename Prefix. Timeout: 60 sec'],
-            'msuffix': ['Mirror Filename Suffix is the End Part attached with the Filename of the Mirrored/Cloned Files', 'Send Mirror Filename Suffix. Timeout: 60 sec'],
-            'mremname': ['Mirror Filename Remname is combination of Regex(s) used for removing or manipulating Filename of the Mirrored/Cloned Files', 'Send Mirror Filename Remname. Timeout: 60 sec'],
             'thumb': ['Custom Thumbnail to appear on the Leeched files uploaded by the bot', 'Send a photo to save it as custom thumbnail. Timeout: 60 sec'],
             'yt_opt': ['YT-DLP Options is the Custom Quality for the extraction of videos from the yt-dlp supported sites.', 'Send YT-DLP Options. Timeout: 60 sec\nFormat: key:value|key:value|key:value.\nExample: format:bv*+mergeall[vcodec=none]|nocheckcertificate:True\nCheck all yt-dlp api options from this <a href="https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/YoutubeDL.py#L184">FILE</a> or use this <a href="https://t.me/mltb_official/177">script</a> to convert cli arguments to api options.'],
             'split_size': ['Leech Splits Size is the size to split the Leeched File before uploading', f'Send Leech split size in bytes. IS_PREMIUM_USER: {IS_PREMIUM_USER}. Timeout: 60 sec'],
@@ -39,12 +36,9 @@ desp_dict = {'rcc': ['RClone is a command-line program to sync files and directo
             'streamsb': ['StreamSB', "Send StreamSB's API Key"],
             }
 fname_dict = {'rcc': 'RClone',
-             'lprefix': 'Prefix',
-             'lsuffix': 'Suffix',
-             'lremname': 'Remname',
-             'mprefix': 'Prefix',
-             'msuffix': 'Suffix',
-             'mremname': 'Remname',
+             'prefix': 'Prefix',
+             'suffix': 'Suffix',
+             'remname': 'Remname',
              'ldump': 'Dump',
              'lcaption': 'Caption',
              'thumb': 'Thumbnail',
@@ -66,7 +60,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         buttons.ibutton("Universal Settings", f"userset {user_id} universal")
         buttons.ibutton("Mirror Settings", f"userset {user_id} mirror")
         buttons.ibutton("Leech Settings", f"userset {user_id} leech")
-        if user_dict and any(key in user_dict for key in ['lprefix', 'lsuffix', 'lremname', 'ldump', 'ddl_servers', 'yt_opt', 'bot_pm', 'media_group', 'equal_splits', 'split_size', 'rclone', 'thumb', 'as_doc']):
+        if user_dict and any(key in user_dict for key in ['prefix', 'suffix', 'remname', 'ldump', 'ddl_servers', 'yt_opt', 'bot_pm', 'media_group', 'equal_splits', 'split_size', 'rclone', 'thumb', 'as_doc']):
             buttons.ibutton("Reset Setting", f"userset {user_id} reset_all")
         buttons.ibutton("Close", f"userset {user_id} close")
 
@@ -86,14 +80,14 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             mediainfo = "Force Enabled"
         dailytl = config_dict['DAILY_TASK_LIMIT'] if config_dict['DAILY_TASK_LIMIT'] else "∞"
         dailytas = user_dict.get('dly_tasks')[1] if user_dict and user_dict.get('dly_tasks') and user_id != OWNER_ID and config_dict['DAILY_TASK_LIMIT'] else config_dict.get('DAILY_TASK_LIMIT', "∞") if user_id != OWNER_ID else "∞"        
-        buttons.ibutton("Mirror Prefix", f"userset {user_id} mprefix")
-        mprefix = 'Not Exists' if (val:=user_dict.get('mprefix', config_dict.get('MIRROR_FILENAME_PREFIX', ''))) == '' else val
+        buttons.ibutton("Prefix", f"userset {user_id} prefix")
+        prefix = 'Not Exists' if (val:=user_dict.get('prefix', config_dict.get('MIRROR_FILENAME_PREFIX', ''))) == '' else val
 
-        buttons.ibutton("Mirror Suffix", f"userset {user_id} msuffix")
-        msuffix = 'Not Exists' if (val:=user_dict.get('msuffix', config_dict.get('MIRROR_FILENAME_SUFFIX', ''))) == '' else val
+        buttons.ibutton("Suffix", f"userset {user_id} suffix")
+        suffix = 'Not Exists' if (val:=user_dict.get('suffix', config_dict.get('MIRROR_FILENAME_SUFFIX', ''))) == '' else val
             
-        buttons.ibutton("Mirror Remname", f"userset {user_id} mremname")
-        mremname = 'Not Exists' if (val:=user_dict.get('mremname', config_dict.get('MIRROR_FILENAME_REMNAME', ''))) == '' else val
+        buttons.ibutton("Remname", f"userset {user_id} remname")
+        remname = 'Not Exists' if (val:=user_dict.get('remname', config_dict.get('MIRROR_FILENAME_REMNAME', ''))) == '' else val
 
         
         text = BotTheme('UNIVERSAL', NAME=name, YT=escape(ytopt), DT=f"{dailytas}/{dailytl}", BOT_PM=bot_pm, MEDIAINFO=mediainfo)
@@ -135,23 +129,13 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         buttons.ibutton("Leech Caption", f"userset {user_id} lcaption")
         lcaption = 'Not Exists' if (val:=user_dict.get('lcaption', config_dict.get('LEECH_FILENAME_CAPTION', ''))) == '' else val
 
-        buttons.ibutton("Leech Prefix", f"userset {user_id} lprefix")
-        lprefix = 'Not Exists' if (val:=user_dict.get('lprefix', config_dict.get('LEECH_FILENAME_PREFIX', ''))) == '' else val
-
-        buttons.ibutton("Leech Suffix", f"userset {user_id} lsuffix")
-        lsuffix = 'Not Exists' if (val:=user_dict.get('lsuffix', config_dict.get('LEECH_FILENAME_SUFFIX', ''))) == '' else val
-            
-        buttons.ibutton("Leech Remname", f"userset {user_id} lremname")
-        lremname = 'Not Exists' if (val:=user_dict.get('lremname', config_dict.get('LEECH_FILENAME_REMNAME', ''))) == '' else val
-
         buttons.ibutton("Leech Dump", f"userset {user_id} ldump")
         ldump = 'Not Exists' if (val:=user_dict.get('ldump', '')) == '' else val
 
         text = BotTheme('LEECH', NAME=name, DL=f"{dailyll}/{dailytlle}",
                 LTYPE=ltype, THUMB=thumbmsg, SPLIT_SIZE=split_size,
                 EQUAL_SPLIT=equal_splits, MEDIA_GROUP=media_group,
-                LCAPTION=escape(lcaption), LPREFIX=escape(lprefix),
-                LSUFFIX=escape(lsuffix), LDUMP=ldump, LREMNAME=escape(lremname))
+                LCAPTION=escape(lcaption), LDUMP=ldump)
 
         buttons.ibutton("Back", f"userset {user_id} back", "footer")
         buttons.ibutton("Close", f"userset {user_id} close", "footer")
@@ -192,12 +176,9 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
                 buttons.ibutton("Disable Media Group", f"userset {user_id} mgroup", "header")
             else:
                 buttons.ibutton("Enable Media Group", f"userset {user_id} mgroup", "header")
-        elif key in ['lprefix', 'lremname', 'lsuffix', 'lcaption', 'ldump']:
-            set_exist = 'Not Exists' if (val:=user_dict.get(key, config_dict.get(f'LEECH_FILENAME_{key[1:].upper()}', ''))) == '' else val
-            text += f"<b>Leech Filename {fname_dict[key]} :</b> {set_exist}\n\n"
-        elif key in ['mprefix', 'mremname', 'msuffix']:
-            set_exist = 'Not Exists' if (val:=user_dict.get(key, config_dict.get(f'MIRROR_FILENAME_{key[1:].upper()}', ''))) == '' else val
-            text += f"<b>Mirror Filename {fname_dict[key]} :</b> {set_exist}\n\n"
+        elif key in ['prefix', 'remname', 'suffix', 'lcaption', 'ldump']:
+            set_exist = 'Not Exists' if (val:=user_dict.get(key, '')) == '' else val
+            text += f"<b>Filename {fname_dict[key]} :</b> {set_exist}\n\n"
         elif key in ['gofile', 'streamsb']:
             set_exist = 'Exists' if key in (ddl_dict:=user_dict.get('ddl_servers', {})) and ddl_dict[key][1] and ddl_dict[key][1] != '' else 'Not Exists'
             ddl_mode = 'Enabled' if key in (ddl_dict:=user_dict.get('ddl_servers', {})) and ddl_dict[key][0] else 'Disabled'
@@ -233,7 +214,7 @@ async def user_settings(client, message):
         if set_arg and (reply_to := message.reply_to_message):
             if message.from_user.id != reply_to.from_user.id:
                 return await editMessage(msg, 'Reply to Your Own Message for Setting via Args Directly')
-            if set_arg in ['lprefix', 'lsuffix', 'lremname', 'lcaption', 'ldump'] and reply_to.text:
+            if set_arg in ['prefix', 'suffix', 'remname', 'lcaption', 'ldump'] and reply_to.text:
                 return await set_custom(client, reply_to, msg, set_arg, True)
             elif set_arg == 'thumb' and reply_to.media:
                 return await set_thumb(client, reply_to, msg, set_arg, True)
@@ -243,11 +224,11 @@ async def user_settings(client, message):
 <b>Custom Thumbnail :</b>
     /cmd -s thumb
 <b>Leech Filename Prefix :</b>
-    /cmd -s lprefix
+    /cmd -s prefix
 <b>Leech Filename Suffix :</b>
-    /cmd -s lsuffix
+    /cmd -s suffix
 <b>Leech Filename Remname :</b>
-    /cmd -s lremname
+    /cmd -s remname
 <b>Leech Filename Caption :</b>
     /cmd -s lcaption
 <b>Leech User Dump :</b>
@@ -504,7 +485,7 @@ async def edit_user_settings(client, query):
         pfunc = partial(set_custom, pre_event=query, key=data[2])
         rfunc = partial(update_user_settings, query, data[2], 'mirror' if data[2] == "ddl_servers" else "ddl_servers")
         await event_handler(client, query, pfunc, rfunc)
-    elif data[2] in ['lprefix', 'lsuffix', 'lremname', 'lcaption', 'ldump', 'mprefix', 'msuffix', 'mremname']:
+    elif data[2] in ['prefix', 'suffix', 'remname', 'lcaption', 'ldump']:
         handler_dict[user_id] = False
         await query.answer()
         edit_mode = len(data) == 4
@@ -514,18 +495,18 @@ async def edit_user_settings(client, query):
         pfunc = partial(set_custom, pre_event=query, key=data[2])
         rfunc = partial(update_user_settings, query, data[2], return_key)
         await event_handler(client, query, pfunc, rfunc)
-    elif data[2] in ['dlprefix', 'dlsuffix', 'dlremname', 'dlcaption', 'dldump']:
+    elif data[2] in ['dlcaption', 'dldump']:
         handler_dict[user_id] = False
         await query.answer()
         update_user_ldata(user_id, data[2][1:], '')
         await update_user_settings(query, data[2][1:], 'leech')
         if DATABASE_URL:
             await DbManger().update_user_data(user_id)
-    elif data[2] in ['dmprefix', 'dmsuffix', 'dmremname']:
+    elif data[2] in ['dprefix', 'dsuffix', 'dremname']:
         handler_dict[user_id] = False
         await query.answer()
         update_user_ldata(user_id, data[2][1:], '')
-        await update_user_settings(query, data[2][1:], 'mirror')
+        await update_user_settings(query, data[2][1:], 'universal')
         if DATABASE_URL:
             await DbManger().update_user_data(user_id)
     elif data[2] == 'back':

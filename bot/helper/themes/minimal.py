@@ -96,7 +96,7 @@ class style:
 <b>• MediaInfo Mode :</b> <code>{MEDIAINFO}</code>
 <b>• User Bot PM :</b> <code>{BOT_PM}</code>'''
 
-    MIRROR = '''<b>Mirror Settings for {NAME}<</b>
+    MIRROR = '''<b>Mirror Settings for {NAME}</b>
 
 <b>• RClone Config :</b> {RCLONE}
 <b>• DDL Server(s) :</b> {DDL_SERVER}
@@ -110,8 +110,5 @@ class style:
 <b>• Equal Splits :</b> {EQUAL_SPLIT}
 <b>• Media Group :</b> {MEDIA_GROUP}
 <b>• Leech Caption :</b> <code>{LCAPTION}</code>
-<b>• Leech Prefix :</b> <code>{LPREFIX}</code>
-<b>• Leech Suffix :</b> <code>{LSUFFIX}</code>
 <b>• Leech Dump :</b> <code>{LDUMP}</code>
-<b>• Leech Remname :</b> <code>{LREMNAME}</code>
 <b>• Daily Leech : </b><code>{DL}</code> per day'''
