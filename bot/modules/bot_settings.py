@@ -341,9 +341,6 @@ async def load_config():
     DAILY_LEECH_LIMIT = '' if len(
         DAILY_LEECH_LIMIT) == 0 else float(DAILY_LEECH_LIMIT)
 
-    DISABLE_DRIVE_LINK = environ.get('DISABLE_DRIVE_LINK', '')
-    DISABLE_DRIVE_LINK = DISABLE_DRIVE_LINK.lower() == 'true'
-
     IMG_SEARCH = environ.get('IMG_SEARCH', '')
     IMG_SEARCH = (IMG_SEARCH.replace("'", '').replace('"', '').replace(
         '[', '').replace(']', '').replace(",", "")).split()
@@ -467,7 +464,6 @@ async def load_config():
                         'MIRROR_LOG_ID': MIRROR_LOG_ID,
                         'LEECH_LOG_ID': LEECH_LOG_ID,
                         'BOT_PM': BOT_PM,
-                        'DISABLE_DRIVE_LINK': DISABLE_DRIVE_LINK,
                         'IMAGES': IMAGES,
                         'IMG_SEARCH': IMG_SEARCH,
                         'IMG_PAGE': IMG_PAGE,

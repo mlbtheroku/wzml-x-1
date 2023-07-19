@@ -130,7 +130,6 @@ default_desp = {'AS_DOCUMENT': 'Default type of Telegram file upload. Default is
                 'IMG_PAGE': 'Set the page value for downloading a image. Each page have approx 70 images. Deafult is 1. Int',
                 'USER_MAX_TASKS': 'Limit the Maximum task for users of group at a time. use the Int',
                 'DAILY_TASK_LIMIT': 'Maximum task a user can do in one day. use the Int',
-                'DISABLE_DRIVE_LINK': 'Disable drive link button. Default is False. Bool',
                 'DAILY_MIRROR_LIMIT': 'Total size upto which user can Mirror in one day. the default unit is GB. Int',
                 'GDRIVE_LIMIT': 'To limit the size of Google Drive folder/file link for leech, Zip, Unzip. the default unit is GB. Int',
                 'DAILY_LEECH_LIMIT': 'Total size upto which user can Leech in one day. the default unit is GB. Int',

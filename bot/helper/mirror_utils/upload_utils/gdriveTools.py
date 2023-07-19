@@ -586,8 +586,7 @@ class GoogleDriveHelper:
                 if mime_type == "application/vnd.google-apps.folder":
                     furl = f"https://drive.google.com/drive/folders/{file.get('id')}"
                     msg += f"<code>{file.get('name')}<br>(folder)</code><br>"
-                    if not config_dict['DISABLE_DRIVE_LINK']:
-                        msg += f"<b><a href={furl}>Drive Link</a></b>"
+                    msg += f"<b><a href={furl}>Drive Link</a></b>"
                     if index_url:
                         if isRecur:
                             url_path = "/".join([rquote(n, safe='')
@@ -602,9 +601,8 @@ class GoogleDriveHelper:
                         f"</a> (shortcut)"
                 else:
                     furl = f"https://drive.google.com/uc?id={file.get('id')}&export=download"
-                    msg += f"📄 <code>{file.get('name')}<br>({get_readable_file_size(int(file.get('size', 0)))})</code><br>"
-                    if not config_dict['DISABLE_DRIVE_LINK']:
-                        msg += f"<b><a href={furl}>Drive Link</a></b>"
+                    msg += f"<code>{file.get('name')}<br>({get_readable_file_size(int(file.get('size', 0)))})</code><br>"
+                    msg += f"<b><a href={furl}>Drive Link</a></b>"
                     if index_url:
                         if isRecur:
                             url_path = "/".join(rquote(n, safe='')
