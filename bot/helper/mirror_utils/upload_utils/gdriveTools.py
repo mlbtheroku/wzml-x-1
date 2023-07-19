@@ -585,7 +585,7 @@ class GoogleDriveHelper:
                 mime_type = file.get('mimeType')
                 if mime_type == "application/vnd.google-apps.folder":
                     furl = f"https://drive.google.com/drive/folders/{file.get('id')}"
-                    msg += f"📁 <code>{file.get('name')}<br>(folder)</code><br>"
+                    msg += f"<code>{file.get('name')}<br>(folder)</code><br>"
                     if not config_dict['DISABLE_DRIVE_LINK']:
                         msg += f"<b><a href={furl}>Drive Link</a></b>"
                     if index_url:
