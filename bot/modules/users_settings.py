@@ -86,6 +86,15 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             mediainfo = "Force Enabled"
         dailytl = config_dict['DAILY_TASK_LIMIT'] if config_dict['DAILY_TASK_LIMIT'] else "∞"
         dailytas = user_dict.get('dly_tasks')[1] if user_dict and user_dict.get('dly_tasks') and user_id != OWNER_ID and config_dict['DAILY_TASK_LIMIT'] else config_dict.get('DAILY_TASK_LIMIT', "∞") if user_id != OWNER_ID else "∞"        
+        buttons.ibutton("Mirror Prefix", f"userset {user_id} mprefix")
+        mprefix = 'Not Exists' if (val:=user_dict.get('mprefix', config_dict.get('MIRROR_FILENAME_PREFIX', ''))) == '' else val
+
+        buttons.ibutton("Mirror Suffix", f"userset {user_id} msuffix")
+        msuffix = 'Not Exists' if (val:=user_dict.get('msuffix', config_dict.get('MIRROR_FILENAME_SUFFIX', ''))) == '' else val
+            
+        buttons.ibutton("Mirror Remname", f"userset {user_id} mremname")
+        mremname = 'Not Exists' if (val:=user_dict.get('mremname', config_dict.get('MIRROR_FILENAME_REMNAME', ''))) == '' else val
+
         
         text = BotTheme('UNIVERSAL', NAME=name, YT=escape(ytopt), DT=f"{dailytas}/{dailytl}", BOT_PM=bot_pm, MEDIAINFO=mediainfo)
         buttons.ibutton("Back", f"userset {user_id} back", "footer")
@@ -96,15 +105,6 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         rccmsg = "Exists" if await aiopath.exists(rclone_path) else "Not Exists"
         dailytlup = get_readable_file_size(config_dict['DAILY_MIRROR_LIMIT'] * 1024**3) if config_dict['DAILY_MIRROR_LIMIT'] else "∞"
         dailyup = get_readable_file_size(await getdailytasks(user_id, check_mirror=True)) if config_dict['DAILY_MIRROR_LIMIT'] and user_id != OWNER_ID else "∞"
-        buttons.ibutton("Mirror Prefix", f"userset {user_id} mprefix")
-        mprefix = 'Not Exists' if (val:=user_dict.get('mprefix', config_dict.get('MIRROR_FILENAME_PREFIX', ''))) == '' else val
-
-        buttons.ibutton("Mirror Suffix", f"userset {user_id} msuffix")
-        msuffix = 'Not Exists' if (val:=user_dict.get('msuffix', config_dict.get('MIRROR_FILENAME_SUFFIX', ''))) == '' else val
-            
-        buttons.ibutton("Mirror Remname", f"userset {user_id} mremname")
-        mremname = 'Not Exists' if (val:=user_dict.get('mremname', config_dict.get('MIRROR_FILENAME_REMNAME', ''))) == '' else val
-
         ddl_serv = len(val.keys()) if (val := user_dict.get('ddl_servers', False)) else 0
         buttons.ibutton("DDL Servers", f"userset {user_id} ddl_servers")
 
