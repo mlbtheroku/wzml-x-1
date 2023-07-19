@@ -508,7 +508,7 @@ async def edit_user_settings(client, query):
         handler_dict[user_id] = False
         await query.answer()
         edit_mode = len(data) == 4
-        return_key = 'leech' if data[2][0] == 'l' else 'mirror'
+        return_key = 'leech' if data[2][0] == 'l' else 'universal'
         await update_user_settings(query, data[2], return_key, edit_mode)
         if not edit_mode: return
         pfunc = partial(set_custom, pre_event=query, key=data[2])
