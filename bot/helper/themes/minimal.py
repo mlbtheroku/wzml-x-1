@@ -99,9 +99,6 @@ class style:
     MIRROR = '''<b>Mirror Settings for {NAME}<</b>
 
 <b>• RClone Config :</b> {RCLONE}
-<b>• Mirror Prefix :</b> <code>{MPREFIX}</code>
-<b>• Mirror Suffix :</b> <code>{MSUFFIX}</code>
-<b>• Mirror Remname :</b> <code>{MREMNAME}</code>
 <b>• DDL Server(s) :</b> {DDL_SERVER}
 <b>• Daily Mirror :</b> <code>{DM}</code> per day'''
 

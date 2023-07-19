@@ -108,8 +108,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         ddl_serv = len(val.keys()) if (val := user_dict.get('ddl_servers', False)) else 0
         buttons.ibutton("DDL Servers", f"userset {user_id} ddl_servers")
 
-        text = BotTheme('MIRROR', NAME=name, RCLONE=rccmsg, DDL_SERVER=ddl_serv, DM=f"{dailyup}/{dailytlup}", MREMNAME=escape(mremname), MPREFIX=escape(mprefix),
-                MSUFFIX=escape(msuffix))
+        text = BotTheme('MIRROR', NAME=name, RCLONE=rccmsg, DDL_SERVER=ddl_serv, DM=f"{dailyup}/{dailytlup}")
         
         buttons.ibutton("Back", f"userset {user_id} back", "footer")
         buttons.ibutton("Close", f"userset {user_id} close", "footer")
