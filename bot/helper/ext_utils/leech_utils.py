@@ -195,7 +195,7 @@ async def format_filename(file_, user_id, dirpath=None, isMirror=False):
     prefix = '' if (val:=user_dict.get('prefix', '')) == '' else val
     remname = '' if (val:=user_dict.get('remname', '')) == '' else val
     suffix = '' if (val:=user_dict.get('suffix', '')) == '' else val
-    lcaption = config_dict['LEECH_FILENAME_CAPTION'] if (val:=user_dict.get('lcaption', '')) == '' else val
+    lcaption = '' if (val:=user_dict.get('lcaption', '')) == '' else val
  
     prefile_ = file_
     if file_.startswith('www'): #Remove all www.xyz.xyz domains

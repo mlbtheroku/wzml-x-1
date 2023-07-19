@@ -81,13 +81,13 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         dailytl = config_dict['DAILY_TASK_LIMIT'] if config_dict['DAILY_TASK_LIMIT'] else "∞"
         dailytas = user_dict.get('dly_tasks')[1] if user_dict and user_dict.get('dly_tasks') and user_id != OWNER_ID and config_dict['DAILY_TASK_LIMIT'] else config_dict.get('DAILY_TASK_LIMIT', "∞") if user_id != OWNER_ID else "∞"        
         buttons.ibutton("Prefix", f"userset {user_id} prefix")
-        prefix = 'Not Exists' if (val:=user_dict.get('prefix', config_dict.get('MIRROR_FILENAME_PREFIX', ''))) == '' else val
+        prefix = 'Not Exists' if (val := user_dict.get('prefix')) == '' else val
 
         buttons.ibutton("Suffix", f"userset {user_id} suffix")
-        suffix = 'Not Exists' if (val:=user_dict.get('suffix', config_dict.get('MIRROR_FILENAME_SUFFIX', ''))) == '' else val
+        suffix = 'Not Exists' if (val := user_dict.get('suffix')) == '' else val
             
         buttons.ibutton("Remname", f"userset {user_id} remname")
-        remname = 'Not Exists' if (val:=user_dict.get('remname', config_dict.get('MIRROR_FILENAME_REMNAME', ''))) == '' else val
+        remname = 'Not Exists' if (val := user_dict.get('remname')) == '' else val
 
         
         text = BotTheme('UNIVERSAL', NAME=name, YT=escape(ytopt), DT=f"{dailytas}/{dailytl}", BOT_PM=bot_pm, MEDIAINFO=mediainfo)
@@ -127,7 +127,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         media_group = 'Enabled' if user_dict.get('media_group', config_dict.get('MEDIA_GROUP')) else 'Disabled'
 
         buttons.ibutton("Leech Caption", f"userset {user_id} lcaption")
-        lcaption = 'Not Exists' if (val:=user_dict.get('lcaption', config_dict.get('LEECH_FILENAME_CAPTION', ''))) == '' else val
+        lcaption = 'Not Exists' if (val:=user_dict.get('lcaption')) == '' else val
 
         buttons.ibutton("Leech Dump", f"userset {user_id} ldump")
         ldump = 'Not Exists' if (val:=user_dict.get('ldump', '')) == '' else val

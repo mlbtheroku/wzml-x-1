@@ -139,34 +139,6 @@ async def load_config():
     LINKS_LOG_ID = environ.get('LINKS_LOG_ID', '')
     LINKS_LOG_ID = '' if len(LINKS_LOG_ID) == 0 else int(LINKS_LOG_ID)
     
-    LEECH_FILENAME_PREFIX = environ.get('LEECH_FILENAME_PREFIX', '')
-    if len(LEECH_FILENAME_PREFIX) == 0:
-        LEECH_FILENAME_PREFIX = ''
-
-    LEECH_FILENAME_SUFFIX = environ.get('LEECH_FILENAME_SUFFIX', '')
-    if len(LEECH_FILENAME_SUFFIX) == 0:
-        LEECH_FILENAME_SUFFIX = ''
-
-    LEECH_FILENAME_CAPTION = environ.get('LEECH_FILENAME_CAPTION', '')
-    if len(LEECH_FILENAME_CAPTION) == 0:
-        LEECH_FILENAME_CAPTION = ''
-
-    LEECH_FILENAME_REMNAME = environ.get('LEECH_FILENAME_REMNAME', '')
-    if len(LEECH_FILENAME_REMNAME) == 0:
-        LEECH_FILENAME_REMNAME = ''
-
-    MIRROR_FILENAME_PREFIX = environ.get('MIRROR_FILENAME_PREFIX', '')
-    if len(MIRROR_FILENAME_PREFIX) == 0:
-        MIRROR_FILENAME_PREFIX = ''
-
-    MIRROR_FILENAME_SUFFIX = environ.get('MIRROR_FILENAME_SUFFIX', '')
-    if len(MIRROR_FILENAME_SUFFIX) == 0:
-        MIRROR_FILENAME_SUFFIX = ''
-
-    MIRROR_FILENAME_REMNAME = environ.get('MIRROR_FILENAME_REMNAME', '')
-    if len(MIRROR_FILENAME_REMNAME) == 0:
-        MIRROR_FILENAME_REMNAME = ''
-        
     SEARCH_PLUGINS = environ.get('SEARCH_PLUGINS', '')
     if len(SEARCH_PLUGINS) == 0:
         SEARCH_PLUGINS = ''
@@ -505,14 +477,7 @@ async def load_config():
                         'INCOMPLETE_TASK_NOTIFIER': INCOMPLETE_TASK_NOTIFIER,
                         'INDEX_URL': INDEX_URL,
                         'IS_TEAM_DRIVE': IS_TEAM_DRIVE,
-                        'LEECH_FILENAME_PREFIX': LEECH_FILENAME_PREFIX,
-                        'LEECH_FILENAME_SUFFIX': LEECH_FILENAME_SUFFIX,
-                        'LEECH_FILENAME_CAPTION': LEECH_FILENAME_CAPTION,
-                        'LEECH_FILENAME_REMNAME': LEECH_FILENAME_REMNAME,
                         'LINKS_LOG_ID': LINKS_LOG_ID,
-                        'MIRROR_FILENAME_PREFIX': MIRROR_FILENAME_PREFIX,
-                        'MIRROR_FILENAME_SUFFIX': MIRROR_FILENAME_SUFFIX,
-                        'MIRROR_FILENAME_REMNAME': MIRROR_FILENAME_REMNAME,
                         'LEECH_SPLIT_SIZE': LEECH_SPLIT_SIZE,
                         'TOKEN_TIMEOUT': TOKEN_TIMEOUT,
                         'MEDIA_GROUP': MEDIA_GROUP,
