@@ -192,10 +192,10 @@ async def split_file(path, size, file_, dirpath, split_size, listener, start_tim
 
 async def format_filename(file_, user_id, dirpath=None, isMirror=False):
     user_dict = user_data.get(user_id, {})
-    prefix = '' if (val:=user_dict.get('prefix', '')) == '' else val
-    remname = '' if (val:=user_dict.get('remname', '')) == '' else val
-    suffix = '' if (val:=user_dict.get('suffix', '')) == '' else val
-    lcaption = '' if (val:=user_dict.get('lcaption', '')) == '' else val
+    prefix = user_dict.get('prefix', '')
+    remname = user_dict.get('remname', '')
+    suffix = user_dict.get('suffix', '')
+    lcaption = user_dict.get('lcaption', '')
  
     prefile_ = file_
     if file_.startswith('www'): #Remove all www.xyz.xyz domains
