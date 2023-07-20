@@ -462,7 +462,8 @@ class MirrorLeechListener:
                             await sendMessage(self.linkslogmsg, msg + BotTheme('L_LL_MSG') + fmsg, sbtn.build_menu(1))
                             await deleteMessage(self.linkslogmsg)
                         else:
-                            await editMessage(self.linkslogmsg, msg + BotTheme('L_LL_MSG') + fmsg)
+                            await sendMessage(self.linkslogmsg, msg + BotTheme('L_LL_MSG') + fmsg)
+                            await deleteMessage(self.linkslogmsg)
                     elif not (config_dict['BOT_PM'] or user_dict.get('bot_pm')):
                         await sendMessage(self.message, msg + BotTheme('L_LL_MSG') + fmsg, buttons.build_menu(1))
                 btn = ButtonMaker()
