@@ -70,7 +70,7 @@ class MirrorLeechListener:
         self.botpmmsg = None
         self.upload_details = {}
         self.source_url = (
-            source_url if (source_url and (source_url.startswith('http') or source_url.startswith('https')))
+            source_url if (source_url and (source_url.startswith('http')))
             else (f"https://t.me/share/url?url={source_url}" if source_url else '')
         )
         self.source_msg = ''
@@ -459,7 +459,8 @@ class MirrorLeechListener:
                         sbtn = ButtonMaker()
                         if self.source_url:
                             sbtn.ubutton(BotTheme('SOURCE_URL'), self.source_url)
-                            await editMessage(self.linkslogmsg, msg + BotTheme('L_LL_MSG') + fmsg, sbtn.build_menu(1))
+                            await sendMessage(self.linkslogmsg, msg + BotTheme('L_LL_MSG') + fmsg, sbtn.build_menu(1))
+                            await deleteMessage(self.linkslogmsg)
                         else:
                             await editMessage(self.linkslogmsg, msg + BotTheme('L_LL_MSG') + fmsg)
                     elif not (config_dict['BOT_PM'] or user_dict.get('bot_pm')):
@@ -543,11 +544,7 @@ class MirrorLeechListener:
                     buttonss = buttons.build_menu(2)
                 log_msg = list((await sendMultiMessage(config_dict['MIRROR_LOG_ID'], msg, buttonss, self.random_pic)).values())[0]
                 if self.linkslogmsg:
-                    lbtn = ButtonMaker()
-                    lbtn.ubutton('Look', log_msg.link)
-                    if self.source_url:
-                        lbtn.ubutton(BotTheme('SOURCE_URL'), self.source_url)
-                    await editMessage(self.linkslogmsg, msg, lbtn.build_menu(2))
+                    await deleteMessage(self.linkslogmsg)
             
             buttons = ButtonMaker()
             if config_dict['BOT_PM'] or user_dict.get('bot_pm'):
@@ -671,4 +668,3 @@ Your upload has been stopped!
         await clean_download(self.dir)
         if self.newDir:
             await clean_download(self.newDir)
-        
